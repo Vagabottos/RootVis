@@ -1,0 +1,36 @@
+/* You can add global styles to this file, and also import other style files */
+
+
+html, body { height: 100%; background-color: #424242; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+html, body {
+  overflow: hidden;
+}
+
+.container, .row, .col {
+  display: flex;
+  overflow: hidden;
+}
+
+.container {
+  flex-direction: column;
+}
+
+.row {
+  flex: 1;
+  flex-direction: row;
+}
+
+.col {
+  flex: 1;
+}
+
+.true-center {
+  justify-content: center;
+  align-items: center;
+}
+
+mat-form-field, .container {
+  color: #fff;
+}

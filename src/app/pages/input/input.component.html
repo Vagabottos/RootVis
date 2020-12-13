@@ -1,0 +1,31 @@
+
+<mat-toolbar color="primary">
+  <span>Rootvis</span>
+</mat-toolbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Game Input</mat-label>
+        <textarea matInput
+                  class="input-game"
+                  placeholder="Enter Rootlog game data here..."
+                  (keyup)="gameChange()"
+                  [(ngModel)]="game"
+                  [ngModelOptions]="{ standalone: true }"></textarea>
+        <mat-hint *ngIf="validRootlog">This is a valid Rootlog!</mat-hint>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <button mat-flat-button
+              color="primary"
+              [routerLink]="['/full-game']"
+              [queryParams]="{ game: this.getEncodedGame() }"
+              [disabled]="!validRootlog">View Game</button>
+    </div>
+  </div>
+</div>
