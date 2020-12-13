@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { RootAction, RootFaction, parseRootlog, RootGame, RootMap, RootSuit, RootActionGainVP } from '@seiyria/rootlog-parser';
+import {
+  RootAction, RootFaction, parseRootlog, RootGame, RootMap, RootSuit,
+  RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
+  RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
+  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece
+} from '@seiyria/rootlog-parser';
 
 function clone(data: any): any {
   return JSON.parse(JSON.stringify(data));
@@ -21,6 +26,7 @@ export interface FormattedAction {
   changeTurn?: RootFaction;
   combat?: { attacker: RootFaction, defender: RootFaction };
   gainVP?: { faction: RootFaction, vp: number };
+  moves?: Array<{ number: number, faction: RootFaction, type: RootPieceType, start?: number|string, destination?: number|string }>;
 
   currentState?: RootGameState;
 
@@ -170,11 +176,21 @@ export class RootlogService {
   private createGameState(game: RootGame): RootGameState {
     const state: RootGameState = {
       factionVP: {},
-      clearings: []
+
+      // 0 = burrow, 1-12 are clearings
+      clearings: Array(13).fill(null).map(() => ({
+        warriors: {},
+        buildings: [],
+        tokens: []
+      }))
     };
 
     Object.keys(game.players).forEach(p => {
       state.factionVP[p as RootFaction] = 0;
+
+      state.clearings.forEach(clearing => {
+        clearing.warriors[p as RootFaction] = 0;
+      });
     });
 
     return state;
@@ -184,6 +200,27 @@ export class RootlogService {
     if (act.gainVP) {
       const { faction, vp } = act.gainVP;
       curState.factionVP[faction] = Math.max(0, (curState.factionVP[faction] ?? 0) + vp);
+    }
+
+    if (act.moves) {
+      act.moves.forEach(move => {
+        const { number, faction, type, start, destination } = move;
+
+        switch (type) {
+          case RootPieceType.Building: {
+            break;
+          }
+
+          case RootPieceType.Token: {
+            break;
+          }
+
+          case RootPieceType.Pawn:
+          case RootPieceType.Warrior: {
+            break;
+          }
+        }
+      });
     }
   }
 
@@ -197,7 +234,81 @@ export class RootlogService {
     if ((act as RootActionGainVP).vp) {
       const vpAct: RootActionGainVP = act as RootActionGainVP;
       base.gainVP = { vp: vpAct.vp, faction: vpAct.faction };
-      base.description = `${this.factionProperNames[vpAct.faction]} gain ${vpAct.vp} VP`;
+      base.description = `${this.factionProperNames[vpAct.faction]} gains ${vpAct.vp} VP`;
+    }
+
+    if ((act as RootActionCombat).attacker) {
+      const combatAct: RootActionCombat = act as RootActionCombat;
+      base.description = `${this.factionProperNames[combatAct.attacker]} attacks ${this.factionProperNames[combatAct.defender]}`;
+    }
+
+    if ((act as RootActionCraft).craftCard || (act as RootActionCraft).craftItem) {
+      const craftAct: RootActionCraft = act as RootActionCraft;
+      base.description = `Crafts ${craftAct.craftItem || craftAct.craftCard}`;
+    }
+
+    if ((act as RootActionMove).things) {
+      const moveAct: RootActionMove = act as RootActionMove;
+      base.description = `Moves ${JSON.stringify(moveAct.things)} to ${JSON.stringify(moveAct.destinations)}`;
+      const moves: any[] = [];
+
+      moveAct.things.forEach((thing, i) => {
+        const destination = moveAct.destinations[i];
+
+        const piece = thing.thing as RootPiece;
+        if (!piece.faction || !piece.pieceType) { return; }
+        if (piece.pieceType === RootPieceType.Raft) { return; }
+
+        let pieceType = RootPieceType.Warrior;
+        if (piece.pieceType.startsWith('b')) { pieceType = RootPieceType.Building; }
+        if (piece.pieceType.startsWith('t')) { pieceType = RootPieceType.Token; }
+
+        moves.push({
+          start: thing.start,
+          destination,
+          number: thing.number,
+          faction: piece.faction,
+          piece: piece.pieceType,
+          pieceType,
+        });
+      });
+
+      base.moves = moves;
+    }
+
+    if ((act as RootActionReveal).subjects) {
+      const revealAct: RootActionReveal = act as RootActionReveal;
+      base.description = `Reveals ${JSON.stringify(revealAct)}`;
+    }
+
+    if ((act as RootActionClearPath).clearings) {
+      const clearAct: RootActionClearPath = act as RootActionClearPath;
+      base.description = `Clears ${JSON.stringify(clearAct)}`;
+    }
+
+    if ((act as RootActionSetOutcast).degree) {
+      const outcastAct: RootActionSetOutcast = act as RootActionSetOutcast;
+      base.description = `Sets outcast to ${this.suitNames[outcastAct.suit]}`;
+    }
+
+    if ((act as RootActionSetPrices).price) {
+      const setPricesAct: RootActionSetPrices = act as RootActionSetPrices;
+      base.description = `Sets prices ${JSON.stringify(setPricesAct)}`;
+    }
+
+    if ((act as RootActionUpdateFunds).funds) {
+      const updateFundsAct: RootActionUpdateFunds = act as RootActionUpdateFunds;
+      base.description = `Updates funds ${JSON.stringify(updateFundsAct)}`;
+    }
+
+    if ((act as RootActionTriggerPlot).plot) {
+      const plotAct: RootActionTriggerPlot = act as RootActionTriggerPlot;
+      base.description = `Triggers plot ${JSON.stringify(plotAct)}`;
+    }
+
+    if ((act as RootActionSwapPlots).clearings) {
+      const swapAct: RootActionSwapPlots = act as RootActionSwapPlots;
+      base.description = `Swaps plots ${JSON.stringify(swapAct)}`;
     }
 
     return base;
