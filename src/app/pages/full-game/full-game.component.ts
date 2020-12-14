@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RootFaction, RootGame, RootMap, RootSuit } from '@seiyria/rootlog-parser';
+
+import { decompressFromEncodedURIComponent } from 'lz-string';
+
+import { RootGame } from '@seiyria/rootlog-parser';
 import { RootlogService } from '../../rootlog.service';
-import { FormattedAction, RootGameState } from '../../rootlog.static';
 
 @Component({
   selector: 'app-full-game',
@@ -21,7 +23,7 @@ export class FullGameComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const game = atob(this.route.snapshot.queryParamMap.get('game') || '');
+    const game = decompressFromEncodedURIComponent(this.route.snapshot.queryParamMap.get('game') || '') || '';
     if (!this.rootlogService.isValidGame(game)) {
       this.router.navigate(['/input-game']);
       return;

@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { compressToEncodedURIComponent } from 'lz-string';
+
 import { RootlogService } from '../../rootlog.service';
 
 @Component({
@@ -18,7 +20,7 @@ export class InputComponent {
   }
 
   getEncodedGame(): string {
-    return btoa(this.game);
+    return compressToEncodedURIComponent(this.game);
   }
 
 }
