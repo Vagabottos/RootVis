@@ -12,9 +12,49 @@
 
 <div class="row">
   <div class="col clearing-col">
-    <div class="clearing-info-container">
+    <mat-card class="clearing-info-container" *ngIf="game && clearing && state && game.clearings">
+      <mat-card-header>
+        <mat-card-title>Clearing #{{ currentClearing }}</mat-card-title>
 
-    </div>
+        <img class="clearing-suit" [src]="'assets/clearing/clearing-' + rootlogService.getSuitName(game.clearings[currentClearing - 1]) + '.png'" *ngIf="currentClearing > 0" />
+      </mat-card-header>
+
+      <mat-card-content>
+        <div>
+    
+          <div class="clearing-warriors">
+            <h3>Warriors</h3>
+        
+            <div class="clearing-warrior-container-container">
+              <div class="clearing-warrior-container" *ngFor="let warCount of clearing.warriors | keyvalue" [class.hidden]="!warCount.value">
+                <img class="clearing-component warrior"
+                     [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
+      
+                <div>
+                  x{{ warCount.value }}
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <div class="clearing-buildings" *ngIf="clearing.buildings.length > 0">
+            <h3>Buildings</h3>
+    
+            <img class="clearing-component building"
+                  *ngFor="let building of clearing.buildings"
+                  [src]="'assets/buildings/' + building + '.png'" />
+          </div>
+    
+          <div class="clearing-tokens" *ngIf="clearing.tokens.length > 0">
+            <h3>Tokens</h3>
+        
+            <img class="clearing-component token"
+                  *ngFor="let token of clearing.tokens"
+                  [src]="'assets/tokens/' + token + '.png'" />
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 
   <div class="col">
@@ -23,7 +63,10 @@
       <div class="map">
         <img class="map-icon" [src]="'assets/map/map-' + game.map.toLowerCase() + '.png'" />
     
-        <div class="map-clearing burrow" *ngIf="game.players.D" (click)="showClearingInfo(0)">
+        <div class="map-clearing burrow" 
+             *ngIf="game.players.D" 
+             (click)="showClearingInfo(0)"
+             [class.selected]="currentClearing === 0">
           <img class="map-pin" [src]="'assets/clearing/clearing-burrow.png'" />
           
           <div class="map-components" *ngIf="state">
@@ -36,7 +79,8 @@
     
         <div class="map-clearing"
               *ngFor="let suit of game.clearings; let i = index"
-              (click)="showClearingInfo(i)"
+              [class.selected]="currentClearing === i + 1"
+              (click)="showClearingInfo(i + 1)"
               [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
               [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">
     
@@ -63,13 +107,20 @@
   </div>
 
   <div class="col players-col">
-    <div class="players">
-      <div class="player" *ngFor="let player of game.players | keyvalue">
-        <img class="player-icon" [src]="'assets/icon/faction-' + rootlogService.getFactionName(player.key) + '.png'" />
-        <span class="player-name">{{ player.value }}</span>
-        <span class="player-vp">[{{ getCurrentVP(player.key) }}]</span>
-      </div>
-    </div>
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Player Scores</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="players">
+          <div class="player" *ngFor="let player of game.players | keyvalue">
+            <img class="player-icon" [src]="'assets/icon/faction-' + rootlogService.getFactionName(player.key) + '.png'" />
+            <span class="player-name">{{ player.value }}</span>
+            <span class="player-vp">[{{ getCurrentVP(player.key) }}]</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
 

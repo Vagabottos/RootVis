@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RootFaction, RootGame, RootMap } from '@seiyria/rootlog-parser';
 import { interval } from 'rxjs';
 import { RootlogService } from '../../rootlog.service';
-import { FormattedAction, RootGameState } from '../../rootlog.static';
+import { FormattedAction, RootClearing, RootGameState } from '../../rootlog.static';
 
 @Component({
   selector: 'app-visualizer',
@@ -13,11 +13,14 @@ export class VisualizerComponent implements OnInit {
 
   @Input() game!: RootGame;
   @Input() startAction!: number;
+  @Input() startClearing!: number;
 
   @Output() actionChange = new EventEmitter();
+  @Output() clearingChange = new EventEmitter();
 
   public map!: RootMap;
   public currentAction = 0;
+  public currentClearing = -1;
   public allActions: FormattedAction[] = [];
 
   public get action(): FormattedAction {
@@ -26,6 +29,10 @@ export class VisualizerComponent implements OnInit {
 
   public get state(): RootGameState | undefined {
     return this.action.currentState;
+  }
+
+  public get clearing(): RootClearing {
+    return this.state?.clearings[this.currentClearing] as RootClearing;
   }
 
   public autoPlay = false;
@@ -42,6 +49,10 @@ export class VisualizerComponent implements OnInit {
 
     if (this.startAction) {
       this.setAction(this.startAction);
+    }
+
+    if (this.startClearing) {
+      this.showClearingInfo(this.startClearing);
     }
 
     console.log(this.game, this.allActions);
@@ -95,7 +106,9 @@ export class VisualizerComponent implements OnInit {
   }
 
   showClearingInfo(idx: number): void {
+    this.currentClearing = idx;
 
+    this.clearingChange.next(idx);
   }
 
   private watchKeybinds(): void {

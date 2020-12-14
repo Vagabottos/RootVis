@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 
 import { VisualizerComponent } from './components/visualizer/visualizer.component';
@@ -19,6 +20,7 @@ const modules = [
   MatSliderModule,
   MatTooltipModule,
   MatInputModule,
+  MatCardModule,
   MatIconModule
 ];
 

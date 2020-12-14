@@ -8,7 +8,9 @@
     <div class="col">
       <app-visualizer [game]="game"
                       [startAction]="startAction"
+                      [startClearing]="startClearing"
                       (actionChange)="actionChange($event)"
+                      (clearingChange)="clearingChange($event)"
                       *ngIf="game"></app-visualizer>
     </div>
   </div>

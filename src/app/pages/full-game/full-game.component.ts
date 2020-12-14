@@ -15,6 +15,7 @@ export class FullGameComponent implements OnInit {
 
   public game?: RootGame;
   public startAction = 0;
+  public startClearing = -1;
 
   constructor(
     private router: Router,
@@ -24,6 +25,7 @@ export class FullGameComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.startAction = +(this.route.snapshot.queryParamMap.get('action') || '0');
+    this.startClearing = +(this.route.snapshot.queryParamMap.get('clearing') || '-1');
 
     const game = decompressFromEncodedURIComponent(this.route.snapshot.queryParamMap.get('game') || '') || '';
     const gameUrl = this.route.snapshot.queryParamMap.get('gameUrl') || '';
@@ -56,6 +58,16 @@ export class FullGameComponent implements OnInit {
       {
         relativeTo: this.route,
         queryParams: { action: num },
+        queryParamsHandling: 'merge'
+      });
+  }
+
+  clearingChange(num: number): void {
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: { clearing: num },
         queryParamsHandling: 'merge'
       });
   }
