@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RootFaction, RootGame, RootMap, RootSuit } from '@seiyria/rootlog-parser';
-import { RootlogService, FormattedAction, RootGameState } from '../../rootlog.service';
+import { RootlogService } from '../../rootlog.service';
+import { FormattedAction, RootGameState } from '../../rootlog.static';
 
 @Component({
   selector: 'app-full-game',
@@ -41,14 +42,6 @@ export class FullGameComponent implements OnInit {
     this.allActions = this.rootlogService.getAllActions(this.game);
 
     console.log(this.game, this.allActions);
-  }
-
-  getFaction(key: string): string {
-    return this.rootlogService.factionNames[key as RootFaction];
-  }
-
-  getSuit(key: string): string {
-    return this.rootlogService.suitNames[key as RootSuit];
   }
 
   setAction(act: number): void {

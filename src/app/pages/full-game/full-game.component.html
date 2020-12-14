@@ -11,7 +11,7 @@
 
         <div class="players">
           <div class="player" *ngFor="let player of game.players | keyvalue">
-            <img class="player-icon" [src]="'assets/icon/faction-' + getFaction(player.key) + '.png'" />
+            <img class="player-icon" [src]="'assets/icon/faction-' + rootlogService.getFactionName(player.key) + '.png'" />
             <span class="player-name">{{ player.value }}</span>
             <span class="player-vp">[{{ getCurrentVP(player.key) }}]</span>
           </div>
@@ -23,10 +23,10 @@
 
             <div class="map-clearing"
                  *ngFor="let suit of game.clearings; let i = index"
-                 [style.left]="rootlogService.clearingPositions[game.map][i][0] + 'px'"
-                 [style.top]="rootlogService.clearingPositions[game.map][i][1] + 'px'">
+                 [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
+                 [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">
 
-              <img class="map-pin" [src]="'assets/clearing/clearing-' + getSuit(suit) + '.png'" />
+              <img class="map-pin" [src]="'assets/clearing/clearing-' + rootlogService.getSuitName(suit) + '.png'" />
 
               <div class="map-components" *ngIf="state">
                 <img class="map-component building"
@@ -40,7 +40,7 @@
                 <img class="map-component warrior"
                     *ngFor="let warCount of state.clearings[i + 1].warriors | keyvalue"
                     [class.hidden]="!warCount.value"
-                    [src]="'assets/icon/faction-' + getFaction(warCount.key) + '.png'" />
+                    [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
               </div>
             </div>
 
@@ -88,7 +88,8 @@
           </button>
 
           <div class="current-action">
-            <span class="action-taker">[{{ rootlogService.factionProperNames[action.currentTurn] }}]</span>
+            <span class="action-turn">({{ currentAction + 1 }}/{{ allActions.length }})</span>
+            <span class="action-taker">[{{ rootlogService.getFactionProperName(action.currentTurn) }}]</span>
             <span class="action-desc">{{ action.description }}</span>
           </div>
         </div>

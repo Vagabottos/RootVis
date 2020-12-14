@@ -4,139 +4,23 @@ import {
   RootAction, RootFaction, parseRootlog, RootGame, RootMap, RootSuit,
   RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
-  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece
+  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem, RootRiverfolkPriceSpecial, RootCorvidSpecial
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
+import {
+  clearingPositions, corvidPlotNames, factionNames, factionProperNames,
+  FormattedAction, itemNames, riverfolkCostNames, RootGameState, suitNames
+} from './rootlog.static';
 
 function clone(data: any): any {
   return JSON.parse(JSON.stringify(data));
-}
-
-export interface RootClearing {
-  warriors: Partial<Record<RootFaction, number>>;
-  buildings: any[];
-  tokens: any[];
-}
-
-export interface RootGameState {
-  factionVP: Partial<Record<RootFaction, number>>;
-  clearings: RootClearing[];
-}
-
-export interface FormattedAction {
-  changeTurn?: RootFaction;
-  combat?: { attacker: RootFaction, defender: RootFaction };
-  gainVP?: { faction: RootFaction, vp: number };
-  moves?: Array<{
-    num: number,
-    faction: RootFaction,
-    piece: string,
-    pieceType: RootPieceType,
-    start?: number|string,
-    destination?: number|string
-  }>;
-
-  currentState?: RootGameState;
-
-  currentTurn: RootFaction;
-  description: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class RootlogService {
-
-  public readonly clearingPositions: Record<RootMap, Array<[number, number]>> = {
-    [RootMap.Fall]: [
-      [18, 18],
-      [358, 89],
-      [362, 367],
-      [16, 320],
-      [233, 23],
-      [370, 206],
-      [248, 320],
-      [140, 364],
-      [19, 134],
-      [157, 87],
-      [264, 192],
-      [124, 227]
-    ],
-    [RootMap.Winter]: [
-      [18, 10],
-      [364, 7],
-      [364, 337],
-      [22, 302],
-      [137, 18],
-      [243, 38],
-      [368, 181],
-      [251, 294],
-      [145, 341],
-      [12, 159],
-      [147, 164],
-      [264, 170]
-    ],
-    [RootMap.Lake]: [
-      [353, 319],
-      [24, 10],
-      [25, 307],
-      [366, 7],
-      [370, 181],
-      [267, 39],
-      [163, 19],
-      [16, 161],
-      [230, 342],
-      [135, 136],
-      [267, 171],
-      [152, 260]
-    ],
-    [RootMap.Mountain]: [
-      [22, 15],
-      [362, 16],
-      [364, 350],
-      [26, 310],
-      [227, 26],
-      [367, 191],
-      [189, 348],
-      [16, 165],
-      [117, 126],
-      [204, 143],
-      [253, 232],
-      [124, 228]
-    ]
-  };
-
-  public readonly factionNames: Record<RootFaction, string> = {
-    [RootFaction.Corvid]: 'corvid',
-    [RootFaction.Cult]: 'cult',
-    [RootFaction.Duchy]: 'duchy',
-    [RootFaction.Eyrie]: 'eyrie',
-    [RootFaction.Marquise]: 'marquise',
-    [RootFaction.Riverfolk]: 'riverfolk',
-    [RootFaction.Vagabond]: 'vagabond',
-    [RootFaction.Vagabond2]: 'vagabond',
-    [RootFaction.Woodland]: 'woodland',
-  };
-
-  public readonly factionProperNames: Record<RootFaction, string> = {
-    [RootFaction.Corvid]: 'Corvid',
-    [RootFaction.Cult]: 'Cult',
-    [RootFaction.Duchy]: 'Duchy',
-    [RootFaction.Eyrie]: 'Eyrie',
-    [RootFaction.Marquise]: 'Marquise',
-    [RootFaction.Riverfolk]: 'Riverfolk',
-    [RootFaction.Vagabond]: 'Vagabond',
-    [RootFaction.Vagabond2]: 'Vagabond #2',
-    [RootFaction.Woodland]: 'Woodland',
-  };
-
-  public readonly suitNames: Record<RootSuit, string> = {
-    [RootSuit.Bird]: 'bird',
-    [RootSuit.Fox]: 'fox',
-    [RootSuit.Mouse]: 'mouse',
-    [RootSuit.Rabbit]: 'rabbit',
-  };
 
   constructor() { }
 
@@ -155,6 +39,34 @@ export class RootlogService {
 
   public game(game: string): RootGame {
     return parseRootlog(game);
+  }
+
+  public getClearingPositions(map: RootMap): Array<[number, number]> {
+    return clearingPositions[map];
+  }
+
+  public getFactionName(faction: RootFaction|string): string {
+    return factionNames[faction as RootFaction];
+  }
+
+  public getFactionProperName(faction: RootFaction|string): string {
+    return factionProperNames[faction as RootFaction];
+  }
+
+  public getSuitName(suit: RootSuit|string): string {
+    return suitNames[suit as RootSuit];
+  }
+
+  public getItemName(item: RootItem|string): string {
+    return itemNames[item as RootItem];
+  }
+
+  public getRiverfolkCostName(cost: RootRiverfolkPriceSpecial|string): string {
+    return riverfolkCostNames[cost as RootRiverfolkPriceSpecial];
+  }
+
+  public getCorvidPlotName(plot: RootCorvidSpecial|string): string {
+    return corvidPlotNames[plot as RootCorvidSpecial];
   }
 
   public getAllActions(game: RootGame): FormattedAction[] {
@@ -275,17 +187,23 @@ export class RootlogService {
     if ((act as RootActionGainVP).vp) {
       const vpAct: RootActionGainVP = act as RootActionGainVP;
       base.gainVP = { vp: vpAct.vp, faction: vpAct.faction };
-      base.description = `${this.factionProperNames[vpAct.faction]} gains ${vpAct.vp} VP`;
+      base.description = `${this.getFactionProperName(vpAct.faction)} gains ${vpAct.vp} VP`;
     }
 
     if ((act as RootActionCombat).attacker) {
       const combatAct: RootActionCombat = act as RootActionCombat;
-      base.description = `${this.factionProperNames[combatAct.attacker]} attacks ${this.factionProperNames[combatAct.defender]}`;
+      base.description = `${this.getFactionProperName(combatAct.attacker)} attacks ${this.getFactionProperName(combatAct.defender)} in clearing ${combatAct.clearing}`;
     }
 
     if ((act as RootActionCraft).craftCard || (act as RootActionCraft).craftItem) {
       const craftAct: RootActionCraft = act as RootActionCraft;
-      base.description = `Crafts ${craftAct.craftItem || craftAct.craftCard}`;
+      if (craftAct.craftCard) {
+        base.description = `Crafts ${craftAct.craftCard}`;
+      }
+
+      if (craftAct.craftItem) {
+        base.description = `Crafts ${this.getItemName(craftAct.craftItem)}`;
+      }
     }
 
     if ((act as RootActionMove).things) {
@@ -323,17 +241,18 @@ export class RootlogService {
 
     if ((act as RootActionClearPath).clearings) {
       const clearAct: RootActionClearPath = act as RootActionClearPath;
-      base.description = `Clears ${JSON.stringify(clearAct)}`;
+      base.description = `Clears path between clearings ${clearAct.clearings[0]} and ${clearAct.clearings[1]}`;
     }
 
     if ((act as RootActionSetOutcast).degree) {
       const outcastAct: RootActionSetOutcast = act as RootActionSetOutcast;
-      base.description = `Sets outcast to ${this.suitNames[outcastAct.suit]}`;
+      base.description = `Sets outcast to ${this.getSuitName(outcastAct.suit)}`;
     }
 
     if ((act as RootActionSetPrices).price) {
       const setPricesAct: RootActionSetPrices = act as RootActionSetPrices;
-      base.description = `Sets prices ${JSON.stringify(setPricesAct)}`;
+      const allPrices = setPricesAct.priceTypes.map(x => this.getRiverfolkCostName(x)).join(', ');
+      base.description = `Sets prices ${allPrices} to ${setPricesAct.price}`;
     }
 
     if ((act as RootActionUpdateFunds).funds) {
@@ -343,12 +262,12 @@ export class RootlogService {
 
     if ((act as RootActionTriggerPlot).plot) {
       const plotAct: RootActionTriggerPlot = act as RootActionTriggerPlot;
-      base.description = `Triggers plot ${JSON.stringify(plotAct)}`;
+      base.description = `Triggers plot ${this.getCorvidPlotName(plotAct.plot)} in clearing ${plotAct.clearing}`;
     }
 
     if ((act as RootActionSwapPlots).clearings) {
       const swapAct: RootActionSwapPlots = act as RootActionSwapPlots;
-      base.description = `Swaps plots ${JSON.stringify(swapAct)}`;
+      base.description = `Swaps plots between clearings ${swapAct.clearings[0]} and ${swapAct.clearings[1]}`;
     }
 
     return base;
