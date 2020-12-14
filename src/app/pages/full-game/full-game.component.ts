@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { decompressFromEncodedURIComponent } from 'lz-string';
@@ -17,7 +17,6 @@ export class FullGameComponent implements OnInit {
   public startAction = 0;
 
   constructor(
-    private cdRef: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
     public rootlogService: RootlogService
@@ -29,28 +28,26 @@ export class FullGameComponent implements OnInit {
     const game = decompressFromEncodedURIComponent(this.route.snapshot.queryParamMap.get('game') || '') || '';
     const gameUrl = this.route.snapshot.queryParamMap.get('gameUrl') || '';
 
-    let gameString = game;
-
-    if (gameUrl) {
-      try {
-        const stringFromUrl = await this.rootlogService.getGameStringFromURL(gameUrl);
-        if (stringFromUrl) {
-          gameString = stringFromUrl;
-        }
-      } catch {
+    if (game) {
+      if (!this.rootlogService.isValidGame(game)) {
         this.router.navigate(['/input-game']);
         return;
       }
+
+      this.game = this.rootlogService.game(game);
     }
 
-    if (!this.rootlogService.isValidGame(gameString)) {
-      this.router.navigate(['/input-game']);
-      return;
+    if (gameUrl) {
+      this.rootlogService.getGameStringFromURL(gameUrl)
+        .subscribe(urldGame => {
+          if (!this.rootlogService.isValidGame(urldGame)) {
+            this.router.navigate(['/input-game']);
+            return;
+          }
+
+          this.game = this.rootlogService.game(urldGame);
+        });
     }
-
-    this.game = this.rootlogService.game(gameString);
-
-    this.cdRef.detectChanges();
   }
 
   actionChange(num: number): void {

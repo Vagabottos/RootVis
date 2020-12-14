@@ -24,14 +24,23 @@ export class InputComponent {
 
   async gameUrlChange(): Promise<void> {
     try {
-      const game = await this.rootlogService.getGameStringFromURL(this.gameUrl);
+      const game = await this.rootlogService.getGameStringFromURLPromise(this.gameUrl);
       this.validRootlogUrl = this.rootlogService.isValidGame(game);
     } catch {
       this.validRootlogUrl = false;
     }
   }
 
+  getURLParams(): any {
+    const base: any = {};
+    if (this.game) { base.game = this.getEncodedGame(); }
+    if (this.gameUrl) { base.gameUrl = this.gameUrl; }
+
+    return base;
+  }
+
   getEncodedGame(): string {
+    if (!this.game) { return ''; }
     return compressToEncodedURIComponent(this.game);
   }
 

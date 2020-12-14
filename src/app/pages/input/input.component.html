@@ -40,7 +40,7 @@
       <button mat-flat-button
               color="primary"
               [routerLink]="['/full-game']"
-              [queryParams]="{ game: this.getEncodedGame(), gameUrl: gameUrl }"
+              [queryParams]="getURLParams()"
               [disabled]="!validRootlog && !validRootlogUrl">View Game</button>
     </div>
   </div>

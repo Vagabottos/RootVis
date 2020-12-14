@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import {
@@ -8,6 +9,8 @@ import {
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import {
   buildingTokenNames,
   clearingPositions, corvidPlotNames, factionNames, factionProperNames,
@@ -23,7 +26,7 @@ function clone(data: any): any {
 })
 export class RootlogService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   public isValidGame(gameString: string): boolean {
     if (!gameString) { return false; }
@@ -38,11 +41,12 @@ export class RootlogService {
     }
   }
 
-  public async getGameStringFromURL(url: string): Promise<string> {
-    const data = await fetch(url);
-    const game = await data.text();
+  public getGameStringFromURL(url: string): Observable<string> {
+    return this.http.get(url, { responseType: 'text' });
+  }
 
-    return game;
+  public async getGameStringFromURLPromise(url: string): Promise<string> {
+    return this.getGameStringFromURL(url).toPromise();
   }
 
   public game(game: string): RootGame {
@@ -230,14 +234,12 @@ export class RootlogService {
       const strings: string[] = [];
 
       moveAct.things.forEach((thing) => {
-        const destination = thing.destination;
-
         const piece = thing.thing as RootPiece;
         if (!piece || !piece.faction || !piece.pieceType) { return; }
         if (piece.pieceType === RootPieceType.Raft) { return; }
 
-        if (thing.start && !isNumber(thing.start) && !isNaN(+thing.start)) { return; }
-        if (destination && !isNumber(destination) && !isNaN(+destination)) { return; }
+        if (thing.start && (!isNumber(thing.start) || !isNaN(+thing.start))) { return; }
+        if (thing.destination && (!isNumber(thing.destination) || !isNaN(+thing.destination))) { return; }
 
         let moveTypeString = '';
         if (piece.pieceType === RootPieceType.Warrior) {
@@ -263,7 +265,7 @@ export class RootlogService {
 
         moves.push({
           start: thing.start,
-          destination,
+          destination: thing.destination,
           num: thing.number,
           faction: piece.faction,
           piece: piece.piece,

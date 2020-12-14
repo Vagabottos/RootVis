@@ -11,6 +11,17 @@
   <div class="map">
     <img class="map-icon" [src]="'assets/map/map-' + game.map.toLowerCase() + '.png'" />
 
+    <div class="map-clearing burrow" *ngIf="game.players.D">
+      <img class="map-pin" [src]="'assets/clearing/clearing-burrow.png'" />
+      
+      <div class="map-components" *ngIf="state">
+        <img class="map-component warrior"
+            *ngFor="let warCount of state.clearings[0].warriors | keyvalue"
+            [class.hidden]="!warCount.value"
+            [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
+      </div>
+    </div>
+
     <div class="map-clearing"
           *ngFor="let suit of game.clearings; let i = index"
           [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
