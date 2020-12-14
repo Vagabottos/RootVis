@@ -176,7 +176,6 @@ export class RootlogService {
             }
 
             if (isNumber(destination) && !isNaN(destination)) {
-              console.log(destination);
               const newWar = ((curState.clearings[destination].warriors[faction] ?? 0) + num);
               curState.clearings[destination].warriors[faction] = newWar;
             }

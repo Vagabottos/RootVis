@@ -1,4 +1,4 @@
-import { RootCorvidSpecial, RootDuchySpecial, RootFaction, RootItem, RootLizardSpecial, RootMap, RootMarquiseSpecial, RootPieceType, RootRiverfolkPriceSpecial, RootRiverfolkSpecial, RootSuit, RootWoodlandSpecial } from '@seiyria/rootlog-parser';
+import { RootCorvidSpecial, RootFaction, RootItem, RootMap, RootPieceType, RootRiverfolkPriceSpecial, RootSuit } from '@seiyria/rootlog-parser';
 
 export interface RootClearing {
   warriors: Partial<Record<RootFaction, number>>;
@@ -47,45 +47,45 @@ export const clearingPositions: Record<RootMap, Array<[number, number]>> = {
   ],
   [RootMap.Winter]: [
     [18, 10],
-    [364, 7],
-    [364, 337],
-    [22, 302],
-    [137, 18],
-    [243, 38],
-    [368, 181],
-    [251, 294],
-    [145, 341],
-    [12, 159],
-    [147, 164],
-    [264, 170]
+    [370, 8],
+    [370, 343],
+    [22, 308],
+    [140, 19],
+    [247, 40],
+    [375, 184],
+    [256, 301],
+    [150, 347],
+    [12, 162],
+    [150, 168],
+    [269, 175]
   ],
   [RootMap.Lake]: [
-    [353, 319],
+    [364, 330],
     [24, 10],
-    [25, 307],
-    [366, 7],
-    [370, 181],
-    [267, 39],
-    [163, 19],
-    [16, 161],
-    [230, 342],
-    [135, 136],
-    [267, 171],
-    [152, 260]
+    [27, 318],
+    [377, 7],
+    [381, 188],
+    [275, 39],
+    [169, 19],
+    [18, 166],
+    [238, 353],
+    [140, 141],
+    [275, 176],
+    [158, 269]
   ],
   [RootMap.Mountain]: [
     [22, 15],
-    [362, 16],
-    [364, 350],
-    [26, 310],
-    [227, 26],
-    [367, 191],
-    [189, 348],
-    [16, 165],
-    [117, 126],
-    [204, 143],
-    [253, 232],
-    [124, 228]
+    [378, 18],
+    [381, 365],
+    [27, 324],
+    [237, 28],
+    [384, 200],
+    [197, 363],
+    [17, 172],
+    [123, 132],
+    [213, 148],
+    [264, 242],
+    [130, 236]
   ]
 };
 
