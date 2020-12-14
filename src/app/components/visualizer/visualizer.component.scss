@@ -104,9 +104,16 @@
     .current-action {
       width: 100%;
       position: absolute;
-      bottom: 15px;
+      top: -50px;
       text-align: center;
       z-index: 0;
+
+      height: 80px;
+      max-height: 80px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
       .action-turn {
         margin-right: 5px;

@@ -9,8 +9,10 @@ import {
 
 import { isNumber } from 'lodash';
 import {
+  BuildingToken,
+  buildingTokenNames,
   clearingPositions, corvidPlotNames, factionNames, factionProperNames,
-  FormattedAction, itemNames, riverfolkCostNames, RootGameState, suitNames
+  FormattedAction, itemNames, pieceNames, riverfolkCostNames, RootGameState, suitNames
 } from './rootlog.static';
 
 function clone(data: any): any {
@@ -57,8 +59,16 @@ export class RootlogService {
     return suitNames[suit as RootSuit];
   }
 
+  public getPieceName(name: RootPieceType|string): string {
+    return pieceNames[name as RootPieceType];
+  }
+
   public getItemName(item: RootItem|string): string {
     return itemNames[item as RootItem];
+  }
+
+  public getBuildingTokenName(item: BuildingToken|string): string {
+    return buildingTokenNames[item as BuildingToken];
   }
 
   public getRiverfolkCostName(cost: RootRiverfolkPriceSpecial|string): string {
@@ -207,9 +217,11 @@ export class RootlogService {
     }
 
     if ((act as RootActionMove).things) {
+      base.description = '[[needs description]]';
+
       const moveAct: RootActionMove = act as RootActionMove;
-      base.description = `Moves ${JSON.stringify(moveAct.things)}`;
       const moves: any[] = [];
+      const strings: string[] = [];
 
       moveAct.things.forEach((thing) => {
         const destination = thing.destination;
@@ -221,6 +233,28 @@ export class RootlogService {
         if (thing.start && !isNumber(thing.start)) { return; }
         if (destination && !isNumber(destination)) { return; }
 
+        let moveTypeString = '';
+        if (piece.pieceType === RootPieceType.Warrior) {
+          moveTypeString = 'warrior(s)';
+        }
+
+        if (piece.pieceType === RootPieceType.Pawn) {
+          moveTypeString = 'pawn(s)';
+        }
+
+        if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
+          moveTypeString = `${this.getFactionName(piece.faction)} ${this.getBuildingTokenName(piece.piece)}`;
+        }
+
+        const moveNum = `${thing.number} ${moveTypeString}`;
+        const startString = thing.start ? `clearing ${thing.start}` : 'supply';
+        const destString = thing.destination ? `clearing ${thing.destination}` : 'supply';
+
+        const moveString = `from ${startString} to ${destString}`;
+        const totalString = `${moveNum} ${moveString}`;
+
+        strings.push(totalString);
+
         moves.push({
           start: thing.start,
           destination,
@@ -231,7 +265,13 @@ export class RootlogService {
         });
       });
 
+      if (strings.length !== 0) {
+        base.description = `Moves ${strings.join(', ')}`;
+      }
+
       base.moves = moves;
+
+      // console.log(moveAct, moves, base.description);
     }
 
     if ((act as RootActionReveal).subjects) {

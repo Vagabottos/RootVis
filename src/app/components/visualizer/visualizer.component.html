@@ -95,8 +95,10 @@
   </button>
 
   <div class="current-action">
-    <span class="action-turn">({{ currentAction + 1 }}/{{ allActions.length }})</span>
-    <span class="action-taker">[{{ rootlogService.getFactionProperName(action.currentTurn) }}]</span>
-    <span class="action-desc">{{ action.description }}</span>
+    <div>
+      <span class="action-turn">({{ currentAction + 1 }}/{{ allActions.length }})</span>
+      <span class="action-taker">[{{ rootlogService.getFactionProperName(action.currentTurn) }}]</span>
+      <span class="action-desc">{{ action.description }}</span>
+    </div>
   </div>
 </div>

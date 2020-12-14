@@ -1,4 +1,4 @@
-import { RootCorvidSpecial, RootFaction, RootItem, RootMap, RootPieceType, RootRiverfolkPriceSpecial, RootSuit } from '@seiyria/rootlog-parser';
+import { RootCorvidSpecial, RootDuchySpecial, RootFaction, RootItem, RootLizardSpecial, RootMap, RootMarquiseSpecial, RootPieceType, RootRiverfolkPriceSpecial, RootRiverfolkSpecial, RootSuit, RootWoodlandSpecial } from '@seiyria/rootlog-parser';
 
 export interface RootClearing {
   warriors: Partial<Record<RootFaction, number>>;
@@ -120,6 +120,14 @@ export const suitNames: Record<RootSuit, string> = {
   [RootSuit.Rabbit]: 'rabbit',
 };
 
+export const pieceNames: Record<RootPieceType, string> = {
+  [RootPieceType.Building]: 'building',
+  [RootPieceType.Pawn]: 'pawn',
+  [RootPieceType.Raft]: 'raft',
+  [RootPieceType.Token]: 'token',
+  [RootPieceType.Warrior]: 'warrior'
+};
+
 export const itemNames: Record<RootItem, string> = {
   [RootItem.Sword]: 'sword',
   [RootItem.Bag]: 'bag',
@@ -138,6 +146,34 @@ export const riverfolkCostNames: Record<RootRiverfolkPriceSpecial, string> = {
 };
 
 export const corvidPlotNames: Record<RootCorvidSpecial, string> = {
+  [RootCorvidSpecial.BombPlot]: 'bomb plot',
+  [RootCorvidSpecial.ExtortionPlot]: 'extortion',
+  [RootCorvidSpecial.RaidPlot]: 'raid',
+  [RootCorvidSpecial.SnarePlot]: 'snare',
+  [RootCorvidSpecial.Plot]: 'plot'
+};
+
+export type BuildingToken = RootMarquiseSpecial | RootWoodlandSpecial | RootRiverfolkSpecial
+                          | RootLizardSpecial | RootDuchySpecial | RootCorvidSpecial;
+
+export const buildingTokenNames: Record<BuildingToken, string> = {
+  [RootMarquiseSpecial.Keep]: 'keep',
+  [RootMarquiseSpecial.Recruiter]: 'recruiter',
+  [RootMarquiseSpecial.Sawmill]: 'sawmill',
+  [RootMarquiseSpecial.Wood]: 'wood',
+  [RootMarquiseSpecial.Workshop]: 'workshop',
+  [RootWoodlandSpecial.FoxBase]: 'fox base',
+  [RootWoodlandSpecial.MouseBase]: 'mouse base',
+  [RootWoodlandSpecial.RabbitBase]: 'rabbit base',
+  [RootRiverfolkSpecial.FoxPost]: 'fox trading post',
+  [RootRiverfolkSpecial.MousePost]: 'mouse trading post',
+  [RootRiverfolkSpecial.RabbitPost]: 'rabbit trading post',
+  [RootLizardSpecial.FoxGarden]: 'fox garden',
+  [RootLizardSpecial.MouseGarden]: 'mouse garden',
+  [RootLizardSpecial.RabbitGarden]: 'rabbit garden',
+  [RootDuchySpecial.Burrow]: 'burrow',
+  [RootDuchySpecial.Citadel]: 'citadel',
+  [RootDuchySpecial.Market]: 'market',
   [RootCorvidSpecial.BombPlot]: 'bomb plot',
   [RootCorvidSpecial.ExtortionPlot]: 'extortion',
   [RootCorvidSpecial.RaidPlot]: 'raid',
