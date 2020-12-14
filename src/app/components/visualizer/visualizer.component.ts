@@ -111,6 +111,10 @@ export class VisualizerComponent implements OnInit {
     this.clearingChange.next(idx);
   }
 
+  clearingHasWarriors(clearing: RootClearing): boolean {
+    return Object.keys(clearing.warriors).some(w => clearing.warriors[w as RootFaction] !== 0);
+  }
+
   private watchKeybinds(): void {
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') {
