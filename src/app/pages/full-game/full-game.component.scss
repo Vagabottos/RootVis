@@ -70,7 +70,7 @@
           left: 0;
           max-width: 74px;
           max-height: 74px;
-          filter: grayscale(50%);
+          filter: grayscale(80%);
         }
 
         .map-components {
@@ -82,6 +82,11 @@
             height: 20px;
             z-index: 100;
             margin: 2px;
+
+            filter: drop-shadow(2px 2px 0 black)
+                    drop-shadow(2px -2px 0 black)
+                    drop-shadow(-2px 2px 0 black)
+                    drop-shadow(-2px -2px 0 black);
           }
         }
       }
