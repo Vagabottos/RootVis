@@ -1,5 +1,4 @@
 
-
 <div class="players">
   <div class="player" *ngFor="let player of game.players | keyvalue">
     <img class="player-icon" [src]="'assets/icon/faction-' + rootlogService.getFactionName(player.key) + '.png'" />

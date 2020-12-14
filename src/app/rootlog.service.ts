@@ -38,6 +38,13 @@ export class RootlogService {
     }
   }
 
+  public async getGameStringFromURL(url: string): Promise<string> {
+    const data = await fetch(url);
+    const game = await data.text();
+
+    return game;
+  }
+
   public game(game: string): RootGame {
     return parseRootlog(game);
   }

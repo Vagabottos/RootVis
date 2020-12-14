@@ -13,10 +13,22 @@ export class InputComponent {
   game = '';
   validRootlog = false;
 
+  gameUrl = '';
+  validRootlogUrl = false;
+
   constructor(private rootlogService: RootlogService) {}
 
   gameChange(): void {
     this.validRootlog = this.rootlogService.isValidGame(this.game);
+  }
+
+  async gameUrlChange(): Promise<void> {
+    try {
+      const game = await this.rootlogService.getGameStringFromURL(this.gameUrl);
+      this.validRootlogUrl = this.rootlogService.isValidGame(game);
+    } catch {
+      this.validRootlogUrl = false;
+    }
   }
 
   getEncodedGame(): string {
