@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --open --port 4332 --hmr",
-    "build": "ng build",
+    "build": "ng build --prod",
     "lint": "ng lint"
   },
   "private": true,
@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~11.0.4",
     "@angular/platform-browser-dynamic": "~11.0.4",
     "@angular/router": "~11.0.4",
+    "@angular/service-worker": "~11.0.4",
     "@seiyria/rootlog-parser": "^1.0.7",
     "lodash": "^4.17.20",
     "rxjs": "~6.6.0",
