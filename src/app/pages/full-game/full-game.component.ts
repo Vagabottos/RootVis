@@ -12,18 +12,7 @@ import { FormattedAction, RootGameState } from '../../rootlog.static';
 export class FullGameComponent implements OnInit {
 
   public game?: RootGame;
-
-  public map!: RootMap;
-  public currentAction = 0;
-  public allActions: FormattedAction[] = [];
-
-  public get action(): FormattedAction {
-    return this.allActions[this.currentAction];
-  }
-
-  public get state(): RootGameState | undefined {
-    return this.action.currentState;
-  }
+  public startAction = 0;
 
   constructor(
     private router: Router,
@@ -39,49 +28,17 @@ export class FullGameComponent implements OnInit {
     }
 
     this.game = this.rootlogService.game(game);
-    this.allActions = this.rootlogService.getAllActions(this.game);
-
-    console.log(this.game, this.allActions);
+    this.startAction = +(this.route.snapshot.queryParamMap.get('action') || '0');
   }
 
-  setAction(act: number): void {
-    this.currentAction = act;
-  }
-
-  prevTurn(): void {
-    let changed = false;
-
-    for (let i = this.currentAction - 1; i >= 0; i--) {
-      const checkAct = this.allActions[i];
-
-      if (checkAct.changeTurn) {
-        this.setAction(i);
-        changed = true;
-        break;
-      }
-    }
-
-    if (!changed) { this.setAction(0); }
-  }
-
-  nextTurn(): void {
-    let changed = false;
-
-    for (let i = this.currentAction + 1; i < this.allActions.length; i++) {
-      const checkAct = this.allActions[i];
-
-      if (checkAct.changeTurn) {
-        this.setAction(i);
-        changed = true;
-        break;
-      }
-    }
-
-    if (!changed) { this.setAction(this.allActions.length - 1); }
-  }
-
-  getCurrentVP(factionKey: string): number {
-    return this.action.currentState?.factionVP[factionKey as RootFaction] ?? 0;
+  actionChange(num: number): void {
+    this.router.navigate(
+      [],
+      {
+        relativeTo: this.route,
+        queryParams: { action: num },
+        queryParamsHandling: 'merge'
+      });
   }
 
 }

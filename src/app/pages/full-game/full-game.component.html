@@ -6,96 +6,10 @@
 <div class="container">
   <div class="row">
     <div class="col">
-
-      <div class="game" *ngIf="game">
-
-        <div class="players">
-          <div class="player" *ngFor="let player of game.players | keyvalue">
-            <img class="player-icon" [src]="'assets/icon/faction-' + rootlogService.getFactionName(player.key) + '.png'" />
-            <span class="player-name">{{ player.value }}</span>
-            <span class="player-vp">[{{ getCurrentVP(player.key) }}]</span>
-          </div>
-        </div>
-
-        <div class="map-container">
-          <div class="map">
-            <img class="map-icon" [src]="'assets/map/map-' + game.map.toLowerCase() + '.png'" />
-
-            <div class="map-clearing"
-                 *ngFor="let suit of game.clearings; let i = index"
-                 [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
-                 [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">
-
-              <img class="map-pin" [src]="'assets/clearing/clearing-' + rootlogService.getSuitName(suit) + '.png'" />
-
-              <div class="map-components" *ngIf="state">
-                <img class="map-component building"
-                     *ngFor="let building of state.clearings[i + 1].buildings"
-                     [src]="'assets/buildings/' + building + '.png'" />
-
-                <img class="map-component token"
-                     *ngFor="let token of state.clearings[i + 1].tokens"
-                     [src]="'assets/tokens/' + token + '.png'" />
-
-                <img class="map-component warrior"
-                    *ngFor="let warCount of state.clearings[i + 1].warriors | keyvalue"
-                    [class.hidden]="!warCount.value"
-                    [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="controls">
-          <button mat-icon-button
-                  [disabled]="currentAction === 0"
-                  (click)="prevTurn()"
-                  matTooltip="Previous Turn"
-                  color="accent">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-
-          <button mat-icon-button
-                  [disabled]="currentAction === 0"
-                  (click)="setAction(currentAction - 1)"
-                  matTooltip="Previous Action"
-                  color="accent">
-            <mat-icon>arrow_left</mat-icon>
-          </button>
-
-          <mat-slider color="accent"
-                      defaultColor="accent"
-                      min="0"
-                      [max]="allActions.length - 1"
-                      (change)="setAction($event.value || 0)"
-                      [(ngModel)]="currentAction"></mat-slider>
-
-          <button mat-icon-button
-                  [disabled]="currentAction === allActions.length - 1"
-                  (click)="setAction(currentAction + 1)"
-                  matTooltip="Next Action"
-                  color="accent">
-            <mat-icon>arrow_right</mat-icon>
-          </button>
-
-          <button mat-icon-button
-                  [disabled]="currentAction === allActions.length - 1"
-                  (click)="nextTurn()"
-                  matTooltip="Next Turn"
-                  color="accent">
-            <mat-icon>arrow_forward</mat-icon>
-          </button>
-
-          <div class="current-action">
-            <span class="action-turn">({{ currentAction + 1 }}/{{ allActions.length }})</span>
-            <span class="action-taker">[{{ rootlogService.getFactionProperName(action.currentTurn) }}]</span>
-            <span class="action-desc">{{ action.description }}</span>
-          </div>
-        </div>
-
-      </div>
-
+      <app-visualizer [game]="game"
+                      [startAction]="startAction"
+                      (actionChange)="actionChange($event)"
+                      *ngIf="game"></app-visualizer>
     </div>
   </div>
 </div>

@@ -8,8 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 
 import { VisualizerComponent } from './components/visualizer/visualizer.component';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 const modules = [
+  CommonModule,
+  FormsModule,
   MatToolbarModule,
   MatButtonModule,
   MatSliderModule,
