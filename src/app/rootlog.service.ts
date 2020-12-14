@@ -155,12 +155,12 @@ export class RootlogService {
           }
 
           case RootPieceType.Token: {
-            if (isNumber(start)) {
+            if (isNumber(start) && !isNaN(+start)) {
               const idx = curState.clearings[start].tokens.findIndex(x => x === formattedPiece);
               curState.clearings[start].tokens.splice(idx, 1);
             }
 
-            if (isNumber(destination)) {
+            if (isNumber(destination) && !isNaN(+destination)) {
               for (let i = 0; i < num; i++) {
                 curState.clearings[destination].tokens.push(formattedPiece);
               }
@@ -170,12 +170,13 @@ export class RootlogService {
 
           case RootPieceType.Pawn:
           case RootPieceType.Warrior: {
-            if (isNumber(start)) {
+            if (isNumber(start) && !isNaN(+start)) {
               const newWar = ((curState.clearings[start].warriors[faction] ?? 0) - num);
               curState.clearings[start].warriors[faction] = newWar;
             }
 
-            if (isNumber(destination)) {
+            if (isNumber(destination) && !isNaN(destination)) {
+              console.log(destination);
               const newWar = ((curState.clearings[destination].warriors[faction] ?? 0) + num);
               curState.clearings[destination].warriors[faction] = newWar;
             }
@@ -226,11 +227,11 @@ export class RootlogService {
         const destination = thing.destination;
 
         const piece = thing.thing as RootPiece;
-        if (!piece.faction || !piece.pieceType) { return; }
+        if (!piece || !piece.faction || !piece.pieceType) { return; }
         if (piece.pieceType === RootPieceType.Raft) { return; }
 
-        if (thing.start && !isNumber(thing.start)) { return; }
-        if (destination && !isNumber(destination)) { return; }
+        if (thing.start && !isNumber(thing.start) && !isNaN(+thing.start)) { return; }
+        if (destination && !isNumber(destination) && !isNaN(+destination)) { return; }
 
         let moveTypeString = '';
         if (piece.pieceType === RootPieceType.Warrior) {
