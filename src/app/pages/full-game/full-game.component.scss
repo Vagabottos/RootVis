@@ -60,10 +60,30 @@
     .map {
       position: relative;
 
-      .map-pin {
+      .map-clearing {
         position: absolute;
         max-width: 74px;
-        max-height: 74px;
+
+        .map-pin {
+          position: absolute;
+          top: 0;
+          left: 0;
+          max-width: 74px;
+          max-height: 74px;
+          filter: grayscale(50%);
+        }
+
+        .map-components {
+          display: flex;
+          flex-wrap: wrap;
+
+          .map-component {
+            width: 20px;
+            height: 20px;
+            z-index: 100;
+            margin: 2px;
+          }
+        }
       }
     }
   }

@@ -8,6 +8,10 @@ html, body {
   overflow: hidden;
 }
 
+.hidden {
+  display: none !important;
+}
+
 .container, .row, .col {
   display: flex;
   overflow: hidden;

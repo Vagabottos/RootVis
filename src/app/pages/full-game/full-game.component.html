@@ -21,12 +21,29 @@
           <div class="map">
             <img class="map-icon" [src]="'assets/map/map-' + game.map.toLowerCase() + '.png'" />
 
-            <img class="map-pin"
-                 [ngClass]="['pin' + (i + 1)]"
+            <div class="map-clearing"
                  *ngFor="let suit of game.clearings; let i = index"
-                 [src]="'assets/clearing/clearing-' + getSuit(suit) + '.png'"
                  [style.left]="rootlogService.clearingPositions[game.map][i][0] + 'px'"
-                 [style.top]="rootlogService.clearingPositions[game.map][i][1] + 'px'" />
+                 [style.top]="rootlogService.clearingPositions[game.map][i][1] + 'px'">
+
+              <img class="map-pin" [src]="'assets/clearing/clearing-' + getSuit(suit) + '.png'" />
+
+              <div class="map-components" *ngIf="state">
+                <img class="map-component building"
+                     *ngFor="let building of state.clearings[i + 1].buildings"
+                     [src]="'assets/buildings/' + building + '.png'" />
+
+                <img class="map-component token"
+                     *ngFor="let token of state.clearings[i + 1].tokens"
+                     [src]="'assets/tokens/' + token + '.png'" />
+
+                <img class="map-component warrior"
+                    *ngFor="let warCount of state.clearings[i + 1].warriors | keyvalue"
+                    [class.hidden]="!warCount.value"
+                    [src]="'assets/icon/faction-' + getFaction(warCount.key) + '.png'" />
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -76,7 +93,6 @@
           </div>
         </div>
 
-        <!-- map, deck, clearings, pool, players, turns, winner -->
       </div>
 
     </div>

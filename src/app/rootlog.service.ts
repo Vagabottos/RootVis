@@ -7,6 +7,8 @@ import {
   RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece
 } from '@seiyria/rootlog-parser';
 
+import { isNumber } from 'lodash';
+
 function clone(data: any): any {
   return JSON.parse(JSON.stringify(data));
 }
@@ -26,7 +28,14 @@ export interface FormattedAction {
   changeTurn?: RootFaction;
   combat?: { attacker: RootFaction, defender: RootFaction };
   gainVP?: { faction: RootFaction, vp: number };
-  moves?: Array<{ number: number, faction: RootFaction, type: RootPieceType, start?: number|string, destination?: number|string }>;
+  moves?: Array<{
+    num: number,
+    faction: RootFaction,
+    piece: string,
+    pieceType: RootPieceType,
+    start?: number|string,
+    destination?: number|string
+  }>;
 
   currentState?: RootGameState;
 
@@ -161,6 +170,7 @@ export class RootlogService {
     allActions.forEach((act, i) => {
       if (i === 0) {
         act.currentState = this.createGameState(game);
+        this.formatStateForAction(act, act.currentState);
         return;
       }
 
@@ -204,19 +214,50 @@ export class RootlogService {
 
     if (act.moves) {
       act.moves.forEach(move => {
-        const { number, faction, type, start, destination } = move;
+        const { num, faction, pieceType, piece, start, destination } = move;
 
-        switch (type) {
+        const formattedPiece = `${faction.toLowerCase()}_${piece}`;
+
+        switch (pieceType) {
           case RootPieceType.Building: {
+            if (isNumber(start)) {
+              const idx = curState.clearings[start].buildings.findIndex(x => x === formattedPiece);
+              curState.clearings[start].buildings.splice(idx, 1);
+            }
+
+            if (isNumber(destination)) {
+              for (let i = 0; i < num; i++) {
+                curState.clearings[destination].buildings.push(formattedPiece);
+              }
+            }
             break;
           }
 
           case RootPieceType.Token: {
+            if (isNumber(start)) {
+              const idx = curState.clearings[start].tokens.findIndex(x => x === formattedPiece);
+              curState.clearings[start].tokens.splice(idx, 1);
+            }
+
+            if (isNumber(destination)) {
+              for (let i = 0; i < num; i++) {
+                curState.clearings[destination].tokens.push(formattedPiece);
+              }
+            }
             break;
           }
 
           case RootPieceType.Pawn:
           case RootPieceType.Warrior: {
+            if (isNumber(start)) {
+              const newWar = ((curState.clearings[start].warriors[faction] ?? 0) - num);
+              curState.clearings[start].warriors[faction] = newWar;
+            }
+
+            if (isNumber(destination)) {
+              const newWar = ((curState.clearings[destination].warriors[faction] ?? 0) + num);
+              curState.clearings[destination].warriors[faction] = newWar;
+            }
             break;
           }
         }
@@ -249,27 +290,26 @@ export class RootlogService {
 
     if ((act as RootActionMove).things) {
       const moveAct: RootActionMove = act as RootActionMove;
-      base.description = `Moves ${JSON.stringify(moveAct.things)} to ${JSON.stringify(moveAct.destinations)}`;
+      base.description = `Moves ${JSON.stringify(moveAct.things)}`;
       const moves: any[] = [];
 
-      moveAct.things.forEach((thing, i) => {
-        const destination = moveAct.destinations[i];
+      moveAct.things.forEach((thing) => {
+        const destination = thing.destination;
 
         const piece = thing.thing as RootPiece;
         if (!piece.faction || !piece.pieceType) { return; }
         if (piece.pieceType === RootPieceType.Raft) { return; }
 
-        let pieceType = RootPieceType.Warrior;
-        if (piece.pieceType.startsWith('b')) { pieceType = RootPieceType.Building; }
-        if (piece.pieceType.startsWith('t')) { pieceType = RootPieceType.Token; }
+        if (thing.start && !isNumber(thing.start)) { return; }
+        if (destination && !isNumber(destination)) { return; }
 
         moves.push({
           start: thing.start,
           destination,
-          number: thing.number,
+          num: thing.number,
           faction: piece.faction,
-          piece: piece.pieceType,
-          pieceType,
+          piece: piece.piece,
+          pieceType: piece.pieceType
         });
       });
 
