@@ -44,13 +44,10 @@ export class VisualizerComponent implements OnInit {
       this.setAction(this.startAction);
     }
 
-    console.log(this.startAction, this.allActions[361]);
-
     console.log(this.game, this.allActions);
   }
 
   setAction(act: number): void {
-    console.log(act, this.allActions.length)
     if (act < 0 || act > this.allActions.length - 1) { return; }
     this.currentAction = act;
 

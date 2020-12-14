@@ -238,8 +238,8 @@ export class RootlogService {
         if (!piece || !piece.faction || !piece.pieceType) { return; }
         if (piece.pieceType === RootPieceType.Raft) { return; }
 
-        if (thing.start && (!isNumber(thing.start) || !isNaN(+thing.start))) { return; }
-        if (thing.destination && (!isNumber(thing.destination) || !isNaN(+thing.destination))) { return; }
+        if (thing.start && (!isNumber(thing.start) && isNaN(+thing.start))) { return; }
+        if (thing.destination && (!isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
 
         let moveTypeString = '';
         if (piece.pieceType === RootPieceType.Warrior) {
