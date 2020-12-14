@@ -9,7 +9,6 @@ import {
 
 import { isNumber } from 'lodash';
 import {
-  BuildingToken,
   buildingTokenNames,
   clearingPositions, corvidPlotNames, factionNames, factionProperNames,
   FormattedAction, itemNames, pieceNames, riverfolkCostNames, RootGameState, suitNames
@@ -67,8 +66,8 @@ export class RootlogService {
     return itemNames[item as RootItem];
   }
 
-  public getBuildingTokenName(item: BuildingToken|string): string {
-    return buildingTokenNames[item as BuildingToken];
+  public getBuildingTokenName(faction: RootFaction, piece: string): string {
+    return buildingTokenNames[`${faction}_${piece}`.toLowerCase()];
   }
 
   public getRiverfolkCostName(cost: RootRiverfolkPriceSpecial|string): string {
@@ -243,7 +242,7 @@ export class RootlogService {
         }
 
         if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
-          moveTypeString = `${this.getFactionName(piece.faction)} ${this.getBuildingTokenName(piece.piece)}`;
+          moveTypeString = `${this.getFactionName(piece.faction)} ${this.getBuildingTokenName(piece.faction, piece.piece)}`;
         }
 
         const moveNum = `${thing.number} ${moveTypeString}`;

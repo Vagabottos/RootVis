@@ -153,30 +153,30 @@ export const corvidPlotNames: Record<RootCorvidSpecial, string> = {
   [RootCorvidSpecial.Plot]: 'plot'
 };
 
-export type BuildingToken = RootMarquiseSpecial | RootWoodlandSpecial | RootRiverfolkSpecial
-                          | RootLizardSpecial | RootDuchySpecial | RootCorvidSpecial;
+export const buildingTokenNames: Record<string, string> = {
+  a_b_f: 'fox base',
+  a_b_m: 'mouse base',
+  a_b_r: 'rabbit base',
+  c_b_r: 'recruiter',
+  c_b_s: 'sawmill',
+  c_b_w: 'workshop',
+  d_b_c: 'citadel',
+  d_b_m: 'market',
+  e_b: 'roost',
+  l_b_f: 'fox garden',
+  l_b_m: 'mouse garden',
+  l_b_r: 'rabbit gaden',
 
-export const buildingTokenNames: Record<BuildingToken, string> = {
-  [RootMarquiseSpecial.Keep]: 'keep',
-  [RootMarquiseSpecial.Recruiter]: 'recruiter',
-  [RootMarquiseSpecial.Sawmill]: 'sawmill',
-  [RootMarquiseSpecial.Wood]: 'wood',
-  [RootMarquiseSpecial.Workshop]: 'workshop',
-  [RootWoodlandSpecial.FoxBase]: 'fox base',
-  [RootWoodlandSpecial.MouseBase]: 'mouse base',
-  [RootWoodlandSpecial.RabbitBase]: 'rabbit base',
-  [RootRiverfolkSpecial.FoxPost]: 'fox trading post',
-  [RootRiverfolkSpecial.MousePost]: 'mouse trading post',
-  [RootRiverfolkSpecial.RabbitPost]: 'rabbit trading post',
-  [RootLizardSpecial.FoxGarden]: 'fox garden',
-  [RootLizardSpecial.MouseGarden]: 'mouse garden',
-  [RootLizardSpecial.RabbitGarden]: 'rabbit garden',
-  [RootDuchySpecial.Burrow]: 'burrow',
-  [RootDuchySpecial.Citadel]: 'citadel',
-  [RootDuchySpecial.Market]: 'market',
-  [RootCorvidSpecial.BombPlot]: 'bomb plot',
-  [RootCorvidSpecial.ExtortionPlot]: 'extortion',
-  [RootCorvidSpecial.RaidPlot]: 'raid',
-  [RootCorvidSpecial.SnarePlot]: 'snare',
-  [RootCorvidSpecial.Plot]: 'plot'
+  a_t: 'sympathy',
+  c_t_k: 'keep',
+  c_t: 'wood',
+  o_t_f: 'fox tradepost',
+  o_t_m: 'mouse tradepost',
+  o_t_r: 'rabbit tradepost',
+  p_d: 'tunnel',
+  p_t_b: 'bomb',
+  p_t_e: 'extortion',
+  p_t_r: 'raid',
+  p_t_s: 'snare',
+  p_t: 'plot'
 };
