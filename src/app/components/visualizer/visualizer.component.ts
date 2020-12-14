@@ -94,6 +94,10 @@ export class VisualizerComponent implements OnInit {
     return this.action.currentState?.factionVP[factionKey as RootFaction] ?? 0;
   }
 
+  showClearingInfo(idx: number): void {
+
+  }
+
   private watchKeybinds(): void {
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') {

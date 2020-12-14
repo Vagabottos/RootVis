@@ -9,6 +9,7 @@ export interface RootClearing {
 export interface RootGameState {
   factionVP: Partial<Record<RootFaction, number>>;
   clearings: RootClearing[];
+  craftedItems: Partial<Record<RootItem, number>>;
 }
 
 export interface FormattedAction {
@@ -23,6 +24,7 @@ export interface FormattedAction {
     start?: number|string,
     destination?: number|string
   }>;
+  craftItem?: RootItem;
 
   currentState?: RootGameState;
 

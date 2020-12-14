@@ -38,3 +38,7 @@ html, body {
 mat-form-field, .container {
   color: #fff;
 }
+
+img {
+  user-select: none;
+}

@@ -10,7 +10,6 @@ import {
 
 import { isNumber } from 'lodash';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import {
   buildingTokenNames,
   clearingPositions, corvidPlotNames, factionNames, factionProperNames,
@@ -25,6 +24,21 @@ function clone(data: any): any {
   providedIn: 'root'
 })
 export class RootlogService {
+
+  public readonly allItems = [
+    { item: RootItem.Bag,       craftedIf: 0 },
+    { item: RootItem.Bag,       craftedIf: 1 },
+    { item: RootItem.Boot,      craftedIf: 0 },
+    { item: RootItem.Boot,      craftedIf: 1 },
+    { item: RootItem.Coin,      craftedIf: 0 },
+    { item: RootItem.Coin,      craftedIf: 1 },
+    { item: RootItem.Crossbow,  craftedIf: 0 },
+    { item: RootItem.Hammer,    craftedIf: 0 },
+    { item: RootItem.Sword,     craftedIf: 0 },
+    { item: RootItem.Sword,     craftedIf: 1 },
+    { item: RootItem.Tea,       craftedIf: 0 },
+    { item: RootItem.Tea,       craftedIf: 1 }
+  ];
 
   constructor(private http: HttpClient) { }
 
@@ -124,7 +138,9 @@ export class RootlogService {
         warriors: {},
         buildings: [],
         tokens: []
-      }))
+      })),
+
+      craftedItems: {}
     };
 
     Object.keys(game.players).forEach(p => {
@@ -142,6 +158,11 @@ export class RootlogService {
     if (act.gainVP) {
       const { faction, vp } = act.gainVP;
       curState.factionVP[faction] = Math.max(0, (curState.factionVP[faction] ?? 0) + vp);
+    }
+
+    if (act.craftItem) {
+      const crafts = curState.craftedItems[act.craftItem] || 0;
+      curState.craftedItems[act.craftItem] = crafts + 1;
     }
 
     if (act.moves) {
@@ -222,6 +243,7 @@ export class RootlogService {
       }
 
       if (craftAct.craftItem) {
+        base.craftItem = craftAct.craftItem;
         base.description = `Crafts ${this.getItemName(craftAct.craftItem)}`;
       }
     }
@@ -243,11 +265,11 @@ export class RootlogService {
 
         let moveTypeString = '';
         if (piece.pieceType === RootPieceType.Warrior) {
-          moveTypeString = 'warrior(s)';
+          moveTypeString = `${this.getFactionName(piece.faction)} warrior(s)`;
         }
 
         if (piece.pieceType === RootPieceType.Pawn) {
-          moveTypeString = 'pawn(s)';
+          moveTypeString = `${this.getFactionName(piece.faction)} pawn(s)`;
         }
 
         if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
