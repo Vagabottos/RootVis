@@ -195,8 +195,8 @@ export class RootlogService {
             }
 
             if (isNumber(destination)) {
-              const newNumBuildings = ((curState.clearings[destination].tokens[formattedPiece] ?? 0) + num);
-              curState.clearings[destination].tokens[formattedPiece] = newNumBuildings;
+              const newNumBuildings = ((curState.clearings[destination].buildings[formattedPiece] ?? 0) + num);
+              curState.clearings[destination].buildings[formattedPiece] = newNumBuildings;
             }
             break;
           }
