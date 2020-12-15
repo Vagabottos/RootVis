@@ -5,7 +5,8 @@ import {
   RootAction, RootFaction, parseRootlog, RootGame, RootMap, RootSuit,
   RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
-  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem, RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard
+  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem,
+  RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
