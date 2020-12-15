@@ -150,7 +150,7 @@ export const factionNames: Record<RootFaction, string> = {
   [RootFaction.Marquise]: 'marquise',
   [RootFaction.Riverfolk]: 'riverfolk',
   [RootFaction.Vagabond]: 'vagabond',
-  [RootFaction.Vagabond2]: 'vagabond',
+  [RootFaction.Vagabond2]: 'vagabond2',
   [RootFaction.Woodland]: 'woodland',
 };
 
