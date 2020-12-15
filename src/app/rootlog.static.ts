@@ -10,6 +10,7 @@ export interface RootGameState {
   factionVP: Partial<Record<RootFaction, number>>;
   clearings: RootClearing[];
   craftedItems: Partial<Record<RootItem, number>>;
+  forests: Record<string, RootClearing>;
 }
 
 export interface FormattedAction {
@@ -17,13 +18,16 @@ export interface FormattedAction {
   combat?: { attacker: RootFaction, defender: RootFaction };
   gainVP?: { faction: RootFaction, vp: number };
   moves?: Array<{
-    num: number,
-    faction: RootFaction,
-    piece: string,
-    pieceType: RootPieceType,
-    start?: number|string,
-    destination?: number|string
+    num: number;
+    faction: RootFaction;
+    piece: string;
+    pieceType: RootPieceType;
+    start?: number|string;
+    startForest?: string;
+    destination?: number|string;
+    destinationForest?: string;
   }>;
+
   craftItem?: RootItem;
 
   currentState?: RootGameState;
@@ -31,6 +35,53 @@ export interface FormattedAction {
   currentTurn: RootFaction;
   description: string;
 }
+
+export const forestPositions: Record<RootMap, Record<string, [number, number]>> = {
+  [RootMap.Fall]: {
+    '1_2_5_10':       [130, 65],
+    '1_9_10_12':      [110, 155],
+    '2_6_10_11_12':   [260, 155],
+    '3_7_11_12':      [240, 275],
+    '3_6_11':         [360, 295],
+    '4_9_12':         [60,  245],
+    '4_7_8_12':       [130, 325],
+  },
+  [RootMap.Winter]: {
+    '1_2_5_6_11_12':  [210, 130],
+    '1_10_11':        [80,  130],
+    '2_7_12':         [360, 145],
+    '3_7_12':         [360, 295],
+    '3_8_12':         [310, 270],
+    '4_10_11':        [90,  230],
+    '4_9_11':         [130, 300],
+    '8_9_11_12':      [220, 270],
+  },
+  [RootMap.Mountain]: {
+    '1_5_9':          [150, 75],
+    '1_8_9':          [75,  125],
+    '2_5_11':         [320, 125],
+    '2_6_11':         [370, 165],
+    '3_7_11_12':      [280, 300],
+    '3_6_11':         [370, 300],
+    '4_8_9_12':       [90,  250],
+    '4_7_12':         [140, 330],
+    '5_9_10':         [220, 120],
+    '5_10_11':        [265, 120],
+    '9_10_12':        [185, 200],
+    '10_11_12':       [225, 240],
+  },
+  [RootMap.Lake]: {
+    '1_9_12':         [270, 320],
+    '1_5_11':         [350, 260],
+    '2_7_10':         [130, 80],
+    '2_8_10':         [90,  120],
+    '3_8_10_12':      [110, 240],
+    '3_9_12':         [150, 340],
+    '4_5_6_11':       [350, 140],
+    '6_7_11':         [250, 110],
+    '7_10_11':        [200, 125],
+  }
+};
 
 export const clearingPositions: Record<RootMap, Array<[number, number]>> = {
   [RootMap.Fall]: [

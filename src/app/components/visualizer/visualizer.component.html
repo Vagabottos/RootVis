@@ -60,7 +60,8 @@
   <div class="col">
 
     <div class="map-container">
-      <div class="map">
+      <div class="map" *ngIf="state">
+
         <img class="map-icon" [src]="'assets/map/map-' + game.map.toLowerCase() + '.png'" />
 
         <div class="map-clearing burrow"
@@ -81,15 +82,16 @@
         </div>
 
         <div class="map-clearing"
-              *ngFor="let suit of game.clearings; let i = index"
-              [class.selected]="currentClearing === i + 1"
-              (click)="showClearingInfo(i + 1)"
-              [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
-              [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">
+             [ngClass]="['clearing-' + (i + 1), 'clearing-' + suit]"
+             *ngFor="let suit of game.clearings; let i = index"
+             [class.selected]="currentClearing === i + 1"
+             (click)="showClearingInfo(i + 1)"
+             [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
+             [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">
 
           <img class="map-pin" [src]="'assets/clearing/clearing-' + rootlogService.getSuitName(suit) + '.png'" />
 
-          <div class="map-components" *ngIf="state">
+          <div class="map-components">
             <img class="map-component building"
                   *ngFor="let building of state.clearings[i + 1].buildings"
                   [src]="'assets/buildings/' + building + '.png'" />
@@ -103,6 +105,20 @@
                 [class.hidden]="!warCount.value"
                 [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
           </div>
+        </div>
+
+        <div class="map-clearing forest"
+             [ngClass]="['forest-' + (forest.key || '')]"
+             *ngFor="let forest of rootlogService.getForests(game.map) | keyvalue"
+             [style.left]="forest.value[0] + 'px'"
+             [style.top]="forest.value[1] + 'px'">
+
+             <div class="map-components">
+              <img class="map-component warrior"
+                  *ngFor="let warCount of state.forests[forest.key].warriors | keyvalue"
+                  [class.hidden]="!warCount.value"
+                  [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
+             </div>
         </div>
 
       </div>
