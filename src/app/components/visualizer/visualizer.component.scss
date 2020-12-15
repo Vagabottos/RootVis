@@ -161,22 +161,22 @@ mat-card {
           left: 50px;
 
           &.fall {
-            bottom: 60px;
+            top: 420px;
             left: 250px;
           }
 
           &.winter {
-            bottom: 60px;
+            top: 400px;
             left: 250px;
           }
 
           &.mountain {
-            bottom: 75px;
+            top: 420px;
             left: 100px;
           }
 
           &.lake {
-            bottom: 75px;
+            top: 420px;
             left: 110px;
           }
         }
