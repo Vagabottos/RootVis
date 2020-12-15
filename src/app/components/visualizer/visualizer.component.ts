@@ -65,6 +65,10 @@ export class VisualizerComponent implements OnInit {
     this.actionChange.next(act);
   }
 
+  isActiveTurn(faction: RootFaction|string): boolean {
+    return this.action.currentTurn === faction;
+  }
+
   prevTurn(): void {
     let changed = false;
 

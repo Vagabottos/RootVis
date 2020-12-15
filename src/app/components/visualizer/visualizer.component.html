@@ -130,8 +130,9 @@
         <mat-card-title>Player Scores</mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div class="players">
+        <div class="players" *ngIf="state">
           <div class="player" *ngFor="let player of game.players | keyvalue">
+            <mat-icon class="player-turn" *ngIf="isActiveTurn(player.key)">play_arrow</mat-icon>
             <img class="player-icon" [src]="'assets/icon/faction-' + rootlogService.getFactionName(player.key) + '.png'" />
             <span class="player-name">{{ player.value }}</span>
             <span class="player-vp">[{{ getCurrentVP(player.key) }}]</span>

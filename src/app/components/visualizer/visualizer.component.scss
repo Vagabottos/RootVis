@@ -119,6 +119,13 @@ mat-card {
       width: 100%;
       margin-top: 10px;
       display: flex;
+      position: relative;
+
+      .player-turn {
+        left: -25px;
+        top: -3px;
+        position: absolute;
+      }
 
       .player-icon {
         width: 16px;
