@@ -202,9 +202,14 @@ export class RootlogService {
 
           case RootPieceType.Pawn:
           case RootPieceType.Warrior: {
-            if (isNumber(start) && !isNaN(+start)) {
-              const newWar = ((curState.clearings[start].warriors[faction] ?? 0) - num);
-              curState.clearings[start].warriors[faction] = newWar;
+            if (pieceType === RootPieceType.Pawn) {
+              curState.clearings.forEach(clearing => clearing.warriors[faction] = 0);
+              // curState.forests.forEach(forest => forest.warriors[faction] = 0);
+            } else {
+              if (isNumber(start) && !isNaN(+start)) {
+                const newWar = ((curState.clearings[start].warriors[faction] ?? 0) - num);
+                curState.clearings[start].warriors[faction] = newWar;
+              }
             }
 
             if (isNumber(destination) && !isNaN(destination)) {
