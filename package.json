@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "~11.0.4",
     "@angular/router": "~11.0.4",
     "@angular/service-worker": "~11.0.4",
-    "@seiyria/rootlog-parser": "^1.0.7",
+    "@seiyria/rootlog-parser": "^1.1.0",
     "lodash": "^4.17.20",
     "lz-string": "^1.4.4",
     "rxjs": "~6.6.0",
