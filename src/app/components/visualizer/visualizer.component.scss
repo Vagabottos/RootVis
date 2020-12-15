@@ -96,7 +96,7 @@ mat-card {
         display: flex;
         flex-direction: row;
         align-items: center;
-  
+
         img {
           margin-right: 16px;
         }
@@ -146,8 +146,6 @@ mat-card {
 
     overflow: hidden;
 
-    height: calc(100% - 134px);
-
     .map {
       position: relative;
 
@@ -157,6 +155,31 @@ mat-card {
         max-width: 74px;
         min-height: 74px;
         max-height: 74px;
+
+        &.burrow {
+          bottom: 50px;
+          left: 50px;
+
+          &.fall {
+            bottom: 60px;
+            left: 250px;
+          }
+
+          &.winter {
+            bottom: 60px;
+            left: 250px;
+          }
+
+          &.mountain {
+            bottom: 75px;
+            left: 100px;
+          }
+
+          &.lake {
+            bottom: 75px;
+            left: 110px;
+          }
+        }
 
         cursor: pointer;
 
