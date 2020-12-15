@@ -5,7 +5,7 @@ import {
   RootAction, RootFaction, parseRootlog, RootGame, RootMap, RootSuit,
   RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
-  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem, RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest
+  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem, RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
@@ -280,6 +280,8 @@ export class RootlogService {
     if ((act as RootActionMove).things) {
       base.description = `[[needs move description]] ${(act as any).raw || '[no raw]'}`;
 
+      if ((act as any).raw === 'w$->11') { console.log(act); }
+
       const moveAct: RootActionMove = act as RootActionMove;
       const moves: any[] = [];
       const strings: string[] = [];
@@ -289,14 +291,20 @@ export class RootlogService {
         if (!piece || !piece.faction || !piece.pieceType) { return; }
         if (piece.pieceType === RootPieceType.Raft) { return; }
 
+        const isBoardStart = thing.start && (thing.start as RootFactionBoard).faction;
+        const isBoardStartString = isBoardStart ? isBoardStart : '';
+
         const isForestStart = thing.start && (thing.start as RootForest).clearings;
         const isForestStartString = isForestStart ? isForestStart.sort().join('_') : '';
+
+        const isBoardEnd = thing.destination && (thing.destination as RootFactionBoard).faction;
+        const isBoardEndString = isBoardEnd ? isBoardEnd : '';
 
         const isForestEnd = thing.destination && (thing.destination as RootForest).clearings;
         const isForestEndString = isForestEnd ? isForestEnd.sort().join('_') : '';
 
-        if (thing.start && (!isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
-        if (thing.destination && (!isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
+        if (thing.start && (!isBoardStart && !isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
+        if (thing.destination && (!isBoardEnd && !isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
 
         let moveTypeString = '';
         if (piece.pieceType === RootPieceType.Warrior) {
@@ -314,12 +322,20 @@ export class RootlogService {
         const moveNum = `${thing.number} ${moveTypeString}`;
         let startString = thing.start ? `clearing ${thing.start}` : 'supply';
         if (isForestStart) {
-          startString = `from forest ${isForestStartString}`;
+          startString = `forest ${isForestStartString}`;
+        }
+
+        if (isBoardStart) {
+          startString = `board ${this.getFactionName(isBoardStartString)}`;
         }
 
         let destString = thing.destination ? `clearing ${thing.destination}` : 'supply';
         if (isForestEnd) {
-          destString = `from forest ${isForestEndString}`;
+          destString = `forest ${isForestEndString}`;
+        }
+
+        if (isBoardEnd) {
+          destString = `board ${this.getFactionName(isBoardEndString)}`;
         }
 
         const moveString = `from ${startString} to ${destString}`;
@@ -344,8 +360,6 @@ export class RootlogService {
       }
 
       base.moves = moves;
-
-      // console.log(moveAct, moves, base.description);
     }
 
     if ((act as RootActionReveal).subjects) {
