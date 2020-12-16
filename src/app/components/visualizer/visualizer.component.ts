@@ -124,7 +124,7 @@ export class VisualizerComponent implements OnInit {
   }
 
   getBuildings(clearing: RootClearing): string[] {
-    let buildings = [] as string[];
+    const buildings: string[] = [];
     const uniqueBuildings = Object.keys(clearing.buildings);
     uniqueBuildings.forEach(building => {
       for (let i = 0; i < (clearing.buildings[building] || 0); i += 1) {
@@ -135,7 +135,7 @@ export class VisualizerComponent implements OnInit {
   }
 
   getTokens(clearing: RootClearing): string[] {
-    let tokens = [] as string[];
+    const tokens: string[] = [];
     const uniqueTokens = Object.keys(clearing.tokens);
     uniqueTokens.forEach(token => {
       for (let i = 0; i < (clearing.tokens[token] || 0); i += 1) {
