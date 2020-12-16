@@ -192,35 +192,35 @@ export class VisualizerComponent implements OnInit {
     }
 
     // More than one sympathy token.
-    if ((clearing.tokens['a_t'] || 0) > 1) {
+    if ((clearing.tokens.a_t || 0) > 1) {
       return true;
     }
 
     // More than one trade post.
-    if ((clearing.tokens['o_t_f'] || 0) +
-        (clearing.tokens['o_t_r'] || 0) +
-        (clearing.tokens['o_t_m'] || 0) > 1) {
+    if ((clearing.tokens.o_t_f || 0) +
+        (clearing.tokens.o_t_r || 0) +
+        (clearing.tokens.o_t_m || 0) > 1) {
       return true;
     }
 
     // More than one plot token.
-    if ((clearing.tokens['p_t'] || 0) +
-        (clearing.tokens['p_t_e'] || 0) +
-        (clearing.tokens['p_t_r'] || 0) +
-        (clearing.tokens['p_t_s'] || 0) +
-        (clearing.tokens['p_t_b'] || 0) > 1) {
+    if ((clearing.tokens.p_t || 0) +
+        (clearing.tokens.p_t_e || 0) +
+        (clearing.tokens.p_t_r || 0) +
+        (clearing.tokens.p_t_s || 0) +
+        (clearing.tokens.p_t_b || 0) > 1) {
       return true;
     }
 
     // More than one Eyrie roost.
-    if ((clearing.buildings['e_b'] || 0) > 1) {
+    if ((clearing.buildings.e_b || 0) > 1) {
       return true;
     }
 
     // More than one alliance base building.
-    if ((clearing.buildings['a_b_f'] || 0) +
-        (clearing.buildings['a_b_r'] || 0) +
-        (clearing.buildings['a_b_m'] || 0) > 1) {
+    if ((clearing.buildings.a_b_f || 0) +
+        (clearing.buildings.a_b_r || 0) +
+        (clearing.buildings.a_b_m || 0) > 1) {
       return true;
     }
 
