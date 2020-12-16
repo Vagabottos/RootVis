@@ -294,13 +294,13 @@ export class RootlogService {
         const isBoardStartString = isBoardStart ? isBoardStart : '';
 
         const isForestStart = thing.start && (thing.start as RootForest).clearings;
-        const isForestStartString = isForestStart ? isForestStart.sort().join('_') : '';
+        const isForestStartString = isForestStart ? isForestStart.sort((a, b) => a - b).join('_') : '';
 
         const isBoardEnd = thing.destination && (thing.destination as RootFactionBoard).faction;
         const isBoardEndString = isBoardEnd ? isBoardEnd : '';
 
         const isForestEnd = thing.destination && (thing.destination as RootForest).clearings;
-        const isForestEndString = isForestEnd ? isForestEnd.sort().join('_') : '';
+        const isForestEndString = isForestEnd ? isForestEnd.sort((a, b) => a - b).join('_') : '';
 
         if (thing.start && (!isBoardStart && !isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
         if (thing.destination && (!isBoardEnd && !isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
