@@ -146,8 +146,8 @@ export class RootlogService {
       // 0 = burrow, 1-12 are clearings
       clearings: Array(13).fill(null).map(() => ({
         warriors: {},
-        buildings: [],
-        tokens: []
+        buildings: {},
+        tokens: {}
       })),
 
       craftedItems: {},
@@ -156,7 +156,7 @@ export class RootlogService {
     };
 
     Object.keys(this.getForests(game.map)).forEach(forest => {
-      state.forests[forest] = { warriors: {}, buildings: [], tokens: [] };
+      state.forests[forest] = { warriors: {}, buildings: {}, tokens: {} };
     });
 
     Object.keys(game.players).forEach(p => {
@@ -190,28 +190,26 @@ export class RootlogService {
         switch (pieceType) {
           case RootPieceType.Building: {
             if (isNumber(start)) {
-              const idx = curState.clearings[start].buildings.findIndex(x => x === formattedPiece);
-              curState.clearings[start].buildings.splice(idx, 1);
+              const newNumBuildings = ((curState.clearings[start].buildings[formattedPiece] ?? 0) - num);
+              curState.clearings[start].buildings[formattedPiece] = newNumBuildings;
             }
 
             if (isNumber(destination)) {
-              for (let i = 0; i < num; i++) {
-                curState.clearings[destination].buildings.push(formattedPiece);
-              }
+              const newNumBuildings = ((curState.clearings[destination].buildings[formattedPiece] ?? 0) + num);
+              curState.clearings[destination].buildings[formattedPiece] = newNumBuildings;
             }
             break;
           }
 
           case RootPieceType.Token: {
             if (isNumber(start) && !isNaN(+start)) {
-              const idx = curState.clearings[start].tokens.findIndex(x => x === formattedPiece);
-              curState.clearings[start].tokens.splice(idx, 1);
+              const newNumTokens = ((curState.clearings[start].tokens[formattedPiece] ?? 0) - num);
+              curState.clearings[start].tokens[formattedPiece] = newNumTokens;
             }
 
             if (isNumber(destination) && !isNaN(+destination)) {
-              for (let i = 0; i < num; i++) {
-                curState.clearings[destination].tokens.push(formattedPiece);
-              }
+              const newNumTokens = ((curState.clearings[destination].tokens[formattedPiece] ?? 0) + num);
+              curState.clearings[destination].tokens[formattedPiece] = newNumTokens;
             }
             break;
           }
@@ -227,17 +225,17 @@ export class RootlogService {
             // otherwise, clear X of them out of their previous clearing (if possible)
             } else {
               if (isNumber(start) && !isNaN(+start)) {
-                const newWar = ((curState.clearings[start].warriors[faction] ?? 0) - num);
-                curState.clearings[start].warriors[faction] = newWar;
+                const newNumWarriors = ((curState.clearings[start].warriors[faction] ?? 0) - num);
+                curState.clearings[start].warriors[faction] = newNumWarriors;
               }
             }
 
             if (!destinationForest && isNumber(destination) && !isNaN(destination)) {
-              const newWar = ((curState.clearings[destination].warriors[faction] ?? 0) + num);
-              curState.clearings[destination].warriors[faction] = newWar;
+              const newNumWarriors = ((curState.clearings[destination].warriors[faction] ?? 0) + num);
+              curState.clearings[destination].warriors[faction] = newNumWarriors;
             }
 
-            if (destinationForest) {
+            if (destinationForest) {// && curState.forests[destinationForest]) {
               curState.forests[destinationForest].warriors[faction] = num;
             }
 

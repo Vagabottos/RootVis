@@ -2,8 +2,8 @@ import { RootCorvidSpecial, RootFaction, RootItem, RootMap, RootPieceType, RootR
 
 export interface RootClearing {
   warriors: Partial<Record<RootFaction, number>>;
-  buildings: any[];
-  tokens: any[];
+  buildings: Partial<Record<string, number>>;
+  tokens: Partial<Record<string, number>>;
 }
 
 export interface RootGameState {

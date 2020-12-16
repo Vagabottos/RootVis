@@ -36,19 +36,19 @@
             </div>
           </div>
 
-          <div class="clearing-buildings" *ngIf="clearing.buildings.length > 0">
+          <div class="clearing-buildings" *ngIf="clearingHasBuildings(clearing)">
             <h3>Buildings</h3>
 
             <img class="clearing-component building"
-                  *ngFor="let building of clearing.buildings"
+                  *ngFor="let building of getBuildings(clearing)"
                   [src]="'assets/buildings/' + building + '.png'" />
           </div>
 
-          <div class="clearing-tokens" *ngIf="clearing.tokens.length > 0">
+          <div class="clearing-tokens" *ngIf="clearingHasTokens(clearing)">
             <h3>Tokens</h3>
 
             <img class="clearing-component token"
-                  *ngFor="let token of clearing.tokens"
+                  *ngFor="let token of getTokens(clearing)"
                   [src]="'assets/tokens/' + token + '.png'" />
           </div>
         </div>
@@ -92,11 +92,11 @@
 
           <div class="map-components">
             <img class="map-component building"
-                  *ngFor="let building of state.clearings[i + 1].buildings"
+                  *ngFor="let building of getBuildings(state.clearings[i + 1])"
                   [src]="'assets/buildings/' + building + '.png'" />
 
             <img class="map-component token"
-                  *ngFor="let token of state.clearings[i + 1].tokens"
+                  *ngFor="let token of getTokens(state.clearings[i + 1])"
                   [src]="'assets/tokens/' + token + '.png'" />
 
             <img class="map-component warrior"

@@ -116,7 +116,37 @@ export class VisualizerComponent implements OnInit {
   }
 
   clearingHasWarriors(clearing: RootClearing): boolean {
-    return Object.keys(clearing.warriors).some(w => clearing.warriors[w as RootFaction] !== 0);
+    return Object.keys(clearing.warriors).some(w => (clearing.warriors[w as RootFaction] || 0) > 0);
+  }
+
+  clearingHasBuildings(clearing: RootClearing): boolean {
+    return Object.keys(clearing.buildings).some(b => (clearing.buildings[b] || 0) > 0);
+  }
+
+  clearingHasTokens(clearing: RootClearing): boolean {
+    return Object.keys(clearing.tokens).some(t => (clearing.tokens[t] || 0) > 0);
+  }
+
+  getBuildings(clearing: RootClearing): string[] {
+    const buildings: string[] = [];
+    const uniqueBuildings = Object.keys(clearing.buildings);
+    uniqueBuildings.forEach(building => {
+      for (let i = 0; i < (clearing.buildings[building] || 0); i += 1) {
+        buildings.push(building);
+      }
+    });
+    return buildings;
+  }
+
+  getTokens(clearing: RootClearing): string[] {
+    const tokens: string[] = [];
+    const uniqueTokens = Object.keys(clearing.tokens);
+    uniqueTokens.forEach(token => {
+      for (let i = 0; i < (clearing.tokens[token] || 0); i += 1) {
+        tokens.push(token);
+      }
+    });
+    return tokens;
   }
 
   private watchKeybinds(): void {
