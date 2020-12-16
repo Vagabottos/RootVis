@@ -162,7 +162,7 @@ export class VisualizerComponent implements OnInit {
       const faction = player as RootFaction;
       return {
         key: faction,
-        value: game.players[faction] || ""
+        value: game.players[faction] || ''
       };
     });
 
