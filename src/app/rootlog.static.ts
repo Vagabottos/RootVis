@@ -15,7 +15,7 @@ export interface RootGameState {
 
 export interface FormattedAction {
   changeTurn?: RootFaction;
-  combat?: { attacker: RootFaction, defender: RootFaction };
+  combat?: { attacker: RootFaction, defender: RootFaction, clearing: number };
   gainVP?: { faction: RootFaction, vp: number };
   moves?: Array<{
     num: number;

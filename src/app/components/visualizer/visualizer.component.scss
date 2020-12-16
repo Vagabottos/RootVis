@@ -206,6 +206,15 @@ mat-card {
           filter: grayscale(80%);
         }
 
+        .map-combat {
+          position: absolute;
+          width: 32px;
+          height: 32px;
+          top: 62px;
+          right: 20px;
+          z-index: 100;
+        }
+
         .map-components {
           display: flex;
           flex-wrap: wrap;

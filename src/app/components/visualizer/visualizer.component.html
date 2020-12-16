@@ -88,6 +88,8 @@
              [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
              [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">
 
+          <img class="map-combat" *ngIf="action.combat && action.combat.clearing === i + 1" src="assets/svg/combat.svg" />
+
           <img class="map-pin" [src]="'assets/clearing/clearing-' + rootlogService.getSuitName(suit) + '.png'" />
 
           <div class="map-components">

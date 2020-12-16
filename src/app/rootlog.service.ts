@@ -261,6 +261,7 @@ export class RootlogService {
 
     if ((act as RootActionCombat).attacker) {
       const combatAct: RootActionCombat = act as RootActionCombat;
+      base.combat = { attacker: combatAct.attacker, defender: combatAct.defender, clearing: combatAct.clearing };
       base.description = `${this.getFactionProperName(combatAct.attacker)} attacks ${this.getFactionProperName(combatAct.defender)} in clearing ${combatAct.clearing}`;
     }
 
