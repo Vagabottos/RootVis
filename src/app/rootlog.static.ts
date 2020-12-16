@@ -226,7 +226,7 @@ export const buildingTokenNames: Record<string, string> = {
   o_t_f: 'fox tradepost',
   o_t_m: 'mouse tradepost',
   o_t_r: 'rabbit tradepost',
-  p_d: 'tunnel',
+  d_t: 'tunnel',
   p_t_b: 'bomb',
   p_t_e: 'extortion',
   p_t_r: 'raid',
