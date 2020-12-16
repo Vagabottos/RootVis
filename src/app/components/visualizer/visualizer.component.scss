@@ -190,6 +190,13 @@ mat-card {
 
         cursor: pointer;
 
+        &.error {
+          filter: drop-shadow(2px 2px 0 #ec2a2a)
+                  drop-shadow(2px -2px 0 #ec2a2a)
+                  drop-shadow(-2px 2px 0 #ec2a2a)
+                  drop-shadow(-2px -2px 0 #ec2a2a);
+        }
+
         &.selected {
           filter: drop-shadow(2px 2px 0 #69f0ae)
                   drop-shadow(2px -2px 0 #69f0ae)

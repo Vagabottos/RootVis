@@ -169,6 +169,66 @@ export class VisualizerComponent implements OnInit {
     return sortedPlayers;
   }
 
+  clearingHasErrors(clearingIndex: number, state: RootGameState): boolean {
+    const clearing = state.clearings[clearingIndex];
+    if (!clearing) {
+      return false;
+    }
+    // Error on...
+
+    // Negative number of pieces.
+    if (Object.values(clearing.warriors).some(numWarriors => (numWarriors || 0) < 0) ||
+        Object.values(clearing.buildings).some(numBuildings => (numBuildings || 0) < 0) ||
+        Object.values(clearing.tokens).some(numTokens => (numTokens || 0) < 0)) {
+      return true;
+    }
+
+    // More than 3 buildings.
+    const totalBuildings = Object.values(clearing.buildings).reduce((a, b) => {
+      return (a || 0) + (b || 0);
+    }, 0) || 0;
+    if (totalBuildings > 3) {
+      return true;
+    }
+
+    // More than one sympathy token.
+    if ((clearing.tokens['a_t'] || 0) > 1) {
+      return true;
+    }
+
+    // More than one trade post.
+    if ((clearing.tokens['o_t_f'] || 0) +
+        (clearing.tokens['o_t_r'] || 0) +
+        (clearing.tokens['o_t_m'] || 0) > 1) {
+      return true;
+    }
+
+    // More than one plot token.
+    if ((clearing.tokens['p_t'] || 0) +
+        (clearing.tokens['p_t_e'] || 0) +
+        (clearing.tokens['p_t_r'] || 0) +
+        (clearing.tokens['p_t_s'] || 0) +
+        (clearing.tokens['p_t_b'] || 0) > 1) {
+      return true;
+    }
+
+    // More than one Eyrie roost.
+    if ((clearing.buildings['e_b'] || 0) > 1) {
+      return true;
+    }
+
+    // More than one alliance base building.
+    if ((clearing.buildings['a_b_f'] || 0) +
+        (clearing.buildings['a_b_r'] || 0) +
+        (clearing.buildings['a_b_m'] || 0) > 1) {
+      return true;
+    }
+
+    // TODO: Error when trade post, garden, or base doesn't match the suit.
+
+    return false;
+  }
+
   private watchKeybinds(): void {
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') {
