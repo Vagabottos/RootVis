@@ -131,7 +131,7 @@
       </mat-card-header>
       <mat-card-content>
         <div class="players" *ngIf="state">
-          <div class="player" *ngFor="let player of game.players | keyvalue">
+          <div class="player" *ngFor="let player of getPlayers(game)">
             <mat-icon class="player-turn" *ngIf="isActiveTurn(player.key)">play_arrow</mat-icon>
             <img class="player-icon" [src]="'assets/icon/faction-' + rootlogService.getFactionName(player.key) + '.png'" />
             <span class="player-name">{{ player.value }}</span>

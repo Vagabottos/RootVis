@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { RootFaction, RootGame, RootMap } from '@seiyria/rootlog-parser';
 import { interval } from 'rxjs';
@@ -147,6 +148,25 @@ export class VisualizerComponent implements OnInit {
       }
     });
     return tokens;
+  }
+
+  getPlayers(game: RootGame): KeyValue<RootFaction, string>[] {
+    const numPlayers = Object.values(game.players).length;
+    const firstRound = game.turns.slice(numPlayers, numPlayers * 2).map(turn => turn.taker as string);
+
+    const sortedPlayers = Object.keys(game.players).sort((player1, player2) => {
+      const indexOfPlayer1 = firstRound.indexOf(player1);
+      const indexOfPlayer2 = firstRound.indexOf(player2);
+      return indexOfPlayer1 - indexOfPlayer2;
+    }).map(player => {
+      const faction = player as RootFaction;
+      return {
+        key: faction,
+        value: game.players[faction] || ''
+      };
+    });
+
+    return sortedPlayers;
   }
 
   private watchKeybinds(): void {
