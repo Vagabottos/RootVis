@@ -308,16 +308,15 @@ export class RootlogService {
         if (thing.start && (!isBoardStart && !isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
         if (thing.destination && (!isBoardEnd && !isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
 
-        
         let moveTypeString = '';
         if (piece.pieceType === RootPieceType.Warrior) {
           moveTypeString = `${this.getFactionProperName(piece.faction)} warrior${thing.number !== 1 ? 's' : ''}`;
         }
-        
+
         if (piece.pieceType === RootPieceType.Pawn) {
           moveTypeString = `${this.getFactionProperName(piece.faction)} pawn${thing.number !== 1 ? 's' : ''}`;
         }
-        
+
         if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
           moveTypeString = `${this.getFactionProperName(piece.faction)} ${this.getBuildingTokenName(piece.faction, piece.piece)}${thing.number !== 1 ? 's' : ''}`;
         }
@@ -414,7 +413,7 @@ export class RootlogService {
           piece: 't',
           pieceType: RootPieceType.Token
         });
-        // ADD NEW PLOT 
+        // ADD NEW PLOT
         base.moves.push({
           destination: plotAct.clearing,
           num: 1,

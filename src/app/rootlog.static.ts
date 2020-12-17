@@ -267,7 +267,7 @@ export const cardNames: Record<RootCardName, string> = {
   [RootCardName.Tun]: 'Tunnels',
   [RootCardName.TunFullName]: 'Tunnels',
   [RootCardName.WoodlandRunners]: 'Woodland Runners',
-}
+};
 
 export const itemNames: Record<RootItem, string> = {
   [RootItem.Sword]: 'sword',
