@@ -82,6 +82,10 @@ mat-card {
       height: 32px;
 
       margin: 2px;
+
+      &.negative {
+        border: 4px solid #ec2a2a;
+      }
     }
 
     .clearing-warrior-container-container {
@@ -190,6 +194,13 @@ mat-card {
 
         cursor: pointer;
 
+        &.error {
+          filter: drop-shadow(2px 2px 0 #ec2a2a)
+                  drop-shadow(2px -2px 0 #ec2a2a)
+                  drop-shadow(-2px 2px 0 #ec2a2a)
+                  drop-shadow(-2px -2px 0 #ec2a2a);
+        }
+
         &.selected {
           filter: drop-shadow(2px 2px 0 #69f0ae)
                   drop-shadow(2px -2px 0 #69f0ae)
@@ -204,6 +215,15 @@ mat-card {
           max-width: 74px;
           max-height: 74px;
           filter: grayscale(80%);
+        }
+
+        .map-combat {
+          position: absolute;
+          width: 32px;
+          height: 32px;
+          top: 62px;
+          right: 20px;
+          z-index: 100;
         }
 
         .map-components {

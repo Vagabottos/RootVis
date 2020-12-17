@@ -1,6 +1,6 @@
 import { KeyValue } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { RootFaction, RootGame, RootMap } from '@seiyria/rootlog-parser';
+import { RootFaction, RootGame, RootMap, RootSuit } from '@seiyria/rootlog-parser';
 import { interval } from 'rxjs';
 import { RootlogService } from '../../rootlog.service';
 import { FormattedAction, RootClearing, RootGameState } from '../../rootlog.static';
@@ -116,38 +116,44 @@ export class VisualizerComponent implements OnInit {
     this.clearingChange.next(idx);
   }
 
+  isPositive(num: number | undefined): boolean {
+    return (num || 0) > 0;
+  }
+
   clearingHasWarriors(clearing: RootClearing): boolean {
-    return Object.keys(clearing.warriors).some(w => (clearing.warriors[w as RootFaction] || 0) > 0);
+    return Object.keys(clearing.warriors).some(w => (clearing.warriors[w as RootFaction] || 0) !== 0);
   }
 
   clearingHasBuildings(clearing: RootClearing): boolean {
-    return Object.keys(clearing.buildings).some(b => (clearing.buildings[b] || 0) > 0);
+    return Object.keys(clearing.buildings).some(b => (clearing.buildings[b] || 0) !== 0);
   }
 
   clearingHasTokens(clearing: RootClearing): boolean {
-    return Object.keys(clearing.tokens).some(t => (clearing.tokens[t] || 0) > 0);
+    return Object.keys(clearing.tokens).some(t => (clearing.tokens[t] || 0) !== 0);
   }
 
-  getBuildings(clearing: RootClearing): string[] {
-    const buildings: string[] = [];
-    const uniqueBuildings = Object.keys(clearing.buildings);
-    uniqueBuildings.forEach(building => {
-      for (let i = 0; i < (clearing.buildings[building] || 0); i += 1) {
-        buildings.push(building);
+  private getCardboard(record: Partial<Record<string, number>>): any[] {
+    const resultCardboard: any[] = [];
+    const uniqueCardboard = Object.keys(record);
+    uniqueCardboard.forEach(cardboard => {
+      const limit = Math.abs(record[cardboard] || 0);
+      const isNegative = (record[cardboard] || 0) < 0;
+      for (let i = 0; i < limit; i += 1) {
+        resultCardboard.push({
+          name: cardboard,
+          isNegative
+        });
       }
     });
-    return buildings;
+    return resultCardboard;
   }
 
-  getTokens(clearing: RootClearing): string[] {
-    const tokens: string[] = [];
-    const uniqueTokens = Object.keys(clearing.tokens);
-    uniqueTokens.forEach(token => {
-      for (let i = 0; i < (clearing.tokens[token] || 0); i += 1) {
-        tokens.push(token);
-      }
-    });
-    return tokens;
+  getBuildings(clearing: RootClearing): any[] {
+    return this.getCardboard(clearing.buildings);
+  }
+
+  getTokens(clearing: RootClearing): any[] {
+    return this.getCardboard(clearing.tokens);
   }
 
   getPlayers(game: RootGame): KeyValue<RootFaction, string>[] {
@@ -167,6 +173,88 @@ export class VisualizerComponent implements OnInit {
     });
 
     return sortedPlayers;
+  }
+
+  clearingHasErrors(clearingIndex: number, state: RootGameState, suit?: RootSuit): boolean {
+    const clearing = state.clearings[clearingIndex];
+    if (!clearing) {
+      return false;
+    }
+    // Error on...
+
+    // Negative number of pieces.
+    if (Object.values(clearing.warriors).some(numWarriors => (numWarriors || 0) < 0) ||
+        Object.values(clearing.buildings).some(numBuildings => (numBuildings || 0) < 0) ||
+        Object.values(clearing.tokens).some(numTokens => (numTokens || 0) < 0)) {
+      return true;
+    }
+
+    // More than 3 buildings.
+    const totalBuildings = Object.values(clearing.buildings).reduce((a, b) => {
+      return (a || 0) + (b || 0);
+    }, 0) || 0;
+    if (totalBuildings > 3) {
+      return true;
+    }
+
+    // More than one sympathy token.
+    if ((clearing.tokens.a_t || 0) > 1) {
+      return true;
+    }
+
+    // More than one trade post.
+    if ((clearing.tokens.o_t_f || 0) +
+        (clearing.tokens.o_t_r || 0) +
+        (clearing.tokens.o_t_m || 0) > 1) {
+      return true;
+    }
+
+    // More than one plot token.
+    if ((clearing.tokens.p_t || 0) +
+        (clearing.tokens.p_t_e || 0) +
+        (clearing.tokens.p_t_r || 0) +
+        (clearing.tokens.p_t_s || 0) +
+        (clearing.tokens.p_t_b || 0) > 1) {
+      return true;
+    }
+
+    // More than one Eyrie roost.
+    if ((clearing.buildings.e_b || 0) > 1) {
+      return true;
+    }
+
+    // More than one alliance base building.
+    if ((clearing.buildings.a_b_f || 0) +
+        (clearing.buildings.a_b_r || 0) +
+        (clearing.buildings.a_b_m || 0) > 1) {
+      return true;
+    }
+
+    // Error when trade post, garden, or base doesn't match the suit
+    // in Fox clearings.
+    if (suit !== RootSuit.Fox && (
+      (clearing.buildings.a_b_f || 0) +
+      (clearing.buildings.l_b_f || 0) +
+      (clearing.tokens.o_t_f || 0) > 0
+    )) {
+      return true;
+    }
+    if (suit !== RootSuit.Rabbit && (
+      (clearing.buildings.a_b_r || 0) +
+      (clearing.buildings.l_b_r || 0) +
+      (clearing.tokens.o_t_r || 0) > 0
+    )) {
+      return true;
+    }
+    if (suit !== RootSuit.Mouse && (
+      (clearing.buildings.a_b_m || 0) +
+      (clearing.buildings.l_b_m || 0) +
+      (clearing.tokens.o_t_m || 0) > 0
+    )) {
+      return true;
+    }
+
+    return false;
   }
 
   private watchKeybinds(): void {

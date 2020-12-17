@@ -15,7 +15,7 @@ export interface RootGameState {
 
 export interface FormattedAction {
   changeTurn?: RootFaction;
-  combat?: { attacker: RootFaction, defender: RootFaction };
+  combat?: { attacker: RootFaction, defender: RootFaction, clearing: number };
   gainVP?: { faction: RootFaction, vp: number };
   moves?: Array<{
     num: number;
@@ -314,7 +314,7 @@ export const buildingTokenNames: Record<string, string> = {
   o_t_f: 'fox trade post',
   o_t_m: 'mouse trade post',
   o_t_r: 'rabbit trade post',
-  p_d: 'tunnel',
+  d_t: 'tunnel',
   p_t_b: 'bomb plot',
   p_t_e: 'extortion plot',
   p_t_r: 'raid plot',
