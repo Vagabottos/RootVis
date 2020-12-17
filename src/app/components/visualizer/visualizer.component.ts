@@ -141,7 +141,7 @@ export class VisualizerComponent implements OnInit {
       for (let i = 0; i < limit; i += 1) {
         resultCardboard.push({
           name: cardboard,
-          isNegative: isNegative
+          isNegative
         });
       }
     });
@@ -233,22 +233,22 @@ export class VisualizerComponent implements OnInit {
     // Error when trade post, garden, or base doesn't match the suit
     // in Fox clearings.
     if (suit !== RootSuit.Fox && (
-      (clearing.buildings.a_b_f || 0) + 
-      (clearing.buildings.l_b_f || 0) + 
+      (clearing.buildings.a_b_f || 0) +
+      (clearing.buildings.l_b_f || 0) +
       (clearing.tokens.o_t_f || 0) > 0
     )) {
       return true;
     }
     if (suit !== RootSuit.Rabbit && (
-      (clearing.buildings.a_b_r || 0) + 
-      (clearing.buildings.l_b_r || 0) + 
+      (clearing.buildings.a_b_r || 0) +
+      (clearing.buildings.l_b_r || 0) +
       (clearing.tokens.o_t_r || 0) > 0
     )) {
       return true;
     }
     if (suit !== RootSuit.Mouse && (
-      (clearing.buildings.a_b_m || 0) + 
-      (clearing.buildings.l_b_m || 0) + 
+      (clearing.buildings.a_b_m || 0) +
+      (clearing.buildings.l_b_m || 0) +
       (clearing.tokens.o_t_m || 0) > 0
     )) {
       return true;
