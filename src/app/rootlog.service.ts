@@ -401,7 +401,7 @@ export class RootlogService {
 
     if ((act as RootActionUpdateFunds).funds) {
       const updateFundsAct: RootActionUpdateFunds = act as RootActionUpdateFunds;
-      base.description = `Update funds ${JSON.stringify(updateFundsAct)}.`;
+      base.description = `Has ${updateFundsAct.funds} total funds.`;
     }
 
     if ((act as RootActionPlot).plot) {
