@@ -272,7 +272,7 @@ export class RootlogService {
     if ((act as RootActionCraft).craftCard || (act as RootActionCraft).craftItem) {
       const craftAct: RootActionCraft = act as RootActionCraft;
       if (craftAct.craftCard) {
-        base.description = `Craft ${this.getCardName(craftAct.craftCard)}`;
+        base.description = `Craft ${this.getCardName(craftAct.craftCard)}.`;
       }
 
       if (craftAct.craftItem) {
@@ -375,34 +375,39 @@ export class RootlogService {
 
     if ((act as RootActionReveal).subjects) {
       const revealAct: RootActionReveal = act as RootActionReveal;
-      base.description = `Reveals ${JSON.stringify(revealAct)}`;
+      base.description = `Reveal ${JSON.stringify(revealAct)}.`;
     }
 
     if ((act as RootActionClearPath).clearings) {
       const clearAct: RootActionClearPath = act as RootActionClearPath;
-      base.description = `Clears path between clearings ${clearAct.clearings[0]} and ${clearAct.clearings[1]}`;
+      base.description = `Clear path between clearings ${clearAct.clearings[0]} and ${clearAct.clearings[1]}.`;
     }
 
     if ((act as RootActionSetOutcast).isHated === true || (act as RootActionSetOutcast).isHated === false) {
       const outcastAct: RootActionSetOutcast = act as RootActionSetOutcast;
-      base.description = `Sets ${outcastAct.isHated ? 'hated' : ''} outcast to ${this.getSuitName(outcastAct.suit)}`;
+      base.description = `Set ${outcastAct.isHated ? 'hated' : ''} outcast to ${this.getSuitName(outcastAct.suit)}.`;
     }
 
     if ((act as RootActionSetPrices).price) {
       const setPricesAct: RootActionSetPrices = act as RootActionSetPrices;
-      const allPrices = setPricesAct.priceTypes.map(x => this.getRiverfolkCostName(x)).join(', ');
-      base.description = `Sets prices ${allPrices} to ${setPricesAct.price}`;
+      const allPrices = (function (priceTypes) {
+        if (priceTypes.length === 3) {
+          return 'all prices'
+        }
+        return `the price of ${priceTypes.join(' and ')}`;
+      }(setPricesAct.priceTypes.map(x => this.getRiverfolkCostName(x))));
+      base.description = `Set ${allPrices} to ${setPricesAct.price}.`;
     }
 
     if ((act as RootActionUpdateFunds).funds) {
       const updateFundsAct: RootActionUpdateFunds = act as RootActionUpdateFunds;
-      base.description = `Updates funds ${JSON.stringify(updateFundsAct)}`;
+      base.description = `Update funds ${JSON.stringify(updateFundsAct)}.`;
     }
 
     if ((act as RootActionPlot).plot) {
       const plotAct: RootActionPlot = act as RootActionPlot;
       if (plotAct.type === RootActionType.FlipPlot) {
-        base.description = `Flips plot ${this.getCorvidPlotName(plotAct.plot)} in clearing ${plotAct.clearing}`;
+        base.description = `Flip ${this.getCorvidPlotName(plotAct.plot)} plot in clearing ${plotAct.clearing}.`;
 
         base.moves = base.moves || [];
         // REMOVE OLD PLOT
@@ -426,7 +431,7 @@ export class RootlogService {
 
     if ((act as RootActionSwapPlots).clearings) {
       const swapAct: RootActionSwapPlots = act as RootActionSwapPlots;
-      base.description = `Swaps plots between clearings ${swapAct.clearings[0]} and ${swapAct.clearings[1]}`;
+      base.description = `Swap plots between clearings ${swapAct.clearings[0]} and ${swapAct.clearings[1]}.`;
     }
 
     return base;
