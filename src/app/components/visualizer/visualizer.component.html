@@ -85,7 +85,7 @@
              [ngClass]="['clearing-' + (i + 1), 'clearing-' + suit]"
              *ngFor="let suit of game.clearings; let i = index"
              [class.selected]="currentClearing === i + 1"
-             [class.error]="clearingHasErrors(i + 1, state)"
+             [class.error]="clearingHasErrors(i + 1, state, suit)"
              (click)="showClearingInfo(i + 1)"
              [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
              [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">

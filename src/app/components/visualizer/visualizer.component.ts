@@ -1,6 +1,6 @@
 import { KeyValue } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { RootFaction, RootGame, RootMap } from '@seiyria/rootlog-parser';
+import { RootFaction, RootGame, RootMap, RootSuit } from '@seiyria/rootlog-parser';
 import { interval } from 'rxjs';
 import { RootlogService } from '../../rootlog.service';
 import { FormattedAction, RootClearing, RootGameState } from '../../rootlog.static';
@@ -169,7 +169,7 @@ export class VisualizerComponent implements OnInit {
     return sortedPlayers;
   }
 
-  clearingHasErrors(clearingIndex: number, state: RootGameState): boolean {
+  clearingHasErrors(clearingIndex: number, state: RootGameState, suit?: RootSuit): boolean {
     const clearing = state.clearings[clearingIndex];
     if (!clearing) {
       return false;
@@ -224,7 +224,29 @@ export class VisualizerComponent implements OnInit {
       return true;
     }
 
-    // TODO: Error when trade post, garden, or base doesn't match the suit.
+    // Error when trade post, garden, or base doesn't match the suit
+    // in Fox clearings.
+    if (suit !== RootSuit.Fox && (
+      (clearing.buildings.a_b_f || 0) + 
+      (clearing.buildings.l_b_f || 0) + 
+      (clearing.tokens.o_t_f || 0) > 0
+    )) {
+      return true;
+    }
+    if (suit !== RootSuit.Rabbit && (
+      (clearing.buildings.a_b_r || 0) + 
+      (clearing.buildings.l_b_r || 0) + 
+      (clearing.tokens.o_t_r || 0) > 0
+    )) {
+      return true;
+    }
+    if (suit !== RootSuit.Mouse && (
+      (clearing.buildings.a_b_m || 0) + 
+      (clearing.buildings.l_b_m || 0) + 
+      (clearing.tokens.o_t_m || 0) > 0
+    )) {
+      return true;
+    }
 
     return false;
   }
