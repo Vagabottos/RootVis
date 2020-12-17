@@ -6,7 +6,7 @@ import {
   RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
   RootActionPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem,
-  RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard
+  RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard, RootCardName
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
@@ -15,7 +15,7 @@ import {
   buildingTokenNames,
   clearingPositions, corvidPlotNames, factionNames, factionProperNames,
   forestPositions,
-  FormattedAction, itemNames, pieceNames, riverfolkCostNames, RootGameState, suitNames
+  FormattedAction, itemNames, cardNames, pieceNames, riverfolkCostNames, RootGameState, suitNames
 } from './rootlog.static';
 
 function clone(data: any): any {
@@ -99,6 +99,10 @@ export class RootlogService {
 
   public getItemName(item: RootItem|string): string {
     return itemNames[item as RootItem];
+  }
+
+  public getCardName(rootCard: RootCardName|string): string {
+    return cardNames[rootCard as RootCardName];
   }
 
   public getBuildingTokenName(faction: RootFaction, piece: string): string {
@@ -256,23 +260,23 @@ export class RootlogService {
     if ((act as RootActionGainVP).vp) {
       const vpAct: RootActionGainVP = act as RootActionGainVP;
       base.gainVP = { vp: vpAct.vp, faction: vpAct.faction };
-      base.description = `${this.getFactionProperName(vpAct.faction)} gains ${vpAct.vp} VP`;
+      base.description = `${this.getFactionProperName(vpAct.faction)} gains ${vpAct.vp} VP.`;
     }
 
     if ((act as RootActionCombat).attacker) {
       const combatAct: RootActionCombat = act as RootActionCombat;
-      base.description = `${this.getFactionProperName(combatAct.attacker)} attacks ${this.getFactionProperName(combatAct.defender)} in clearing ${combatAct.clearing}`;
+      base.description = `${this.getFactionProperName(combatAct.attacker)} battles ${this.getFactionProperName(combatAct.defender)} in clearing ${combatAct.clearing}.`;
     }
 
     if ((act as RootActionCraft).craftCard || (act as RootActionCraft).craftItem) {
       const craftAct: RootActionCraft = act as RootActionCraft;
       if (craftAct.craftCard) {
-        base.description = `Crafts ${craftAct.craftCard}`;
+        base.description = `Craft ${this.getCardName(craftAct.craftCard)}`;
       }
 
       if (craftAct.craftItem) {
         base.craftItem = craftAct.craftItem;
-        base.description = `Crafts ${this.getItemName(craftAct.craftItem)}`;
+        base.description = `Craft ${this.getItemName(craftAct.craftItem)}.`;
       }
     }
 
@@ -303,17 +307,18 @@ export class RootlogService {
         if (thing.start && (!isBoardStart && !isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
         if (thing.destination && (!isBoardEnd && !isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
 
+        
         let moveTypeString = '';
         if (piece.pieceType === RootPieceType.Warrior) {
-          moveTypeString = `${this.getFactionName(piece.faction)} warrior(s)`;
+          moveTypeString = `${this.getFactionProperName(piece.faction)} warrior${thing.number !== 1 ? 's' : ''}`;
         }
-
+        
         if (piece.pieceType === RootPieceType.Pawn) {
-          moveTypeString = `${this.getFactionName(piece.faction)} pawn(s)`;
+          moveTypeString = `${this.getFactionProperName(piece.faction)} pawn${thing.number !== 1 ? 's' : ''}`;
         }
-
+        
         if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
-          moveTypeString = `${this.getFactionName(piece.faction)} ${this.getBuildingTokenName(piece.faction, piece.piece)}`;
+          moveTypeString = `${this.getFactionProperName(piece.faction)} ${this.getBuildingTokenName(piece.faction, piece.piece)}${thing.number !== 1 ? 's' : ''}`;
         }
 
         const moveNum = `${thing.number} ${moveTypeString}`;
@@ -323,7 +328,7 @@ export class RootlogService {
         }
 
         if (isBoardStart) {
-          startString = `board ${this.getFactionName(isBoardStartString)}`;
+          startString = `${this.getFactionProperName(isBoardStartString)}'s board`;
         }
 
         let destString = thing.destination ? `clearing ${thing.destination}` : 'supply';
@@ -332,11 +337,20 @@ export class RootlogService {
         }
 
         if (isBoardEnd) {
-          destString = `board ${this.getFactionName(isBoardEndString)}`;
+          destString = `${this.getFactionProperName(isBoardEndString)}'s board`;
         }
 
-        const moveString = `from ${startString} to ${destString}`;
-        const totalString = `${moveNum} ${moveString}`;
+        let moveString = `from ${startString} to ${destString}`;
+        let verb = 'Move';
+        if (startString === 'supply') {
+          verb = 'Place';
+          moveString = `in ${destString}`;
+        } else if (destString === 'supply') {
+          verb = 'Remove';
+          moveString = `from ${startString}`;
+        }
+
+        const totalString = `${verb} ${moveNum} ${moveString}.`;
 
         strings.push(totalString);
 
@@ -353,7 +367,7 @@ export class RootlogService {
       });
 
       if (strings.length !== 0) {
-        base.description = `Moves ${strings.join(', ')}`;
+        base.description = `${strings.join(' ')}`;
       }
 
       base.moves = moves;
