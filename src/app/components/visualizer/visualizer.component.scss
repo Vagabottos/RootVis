@@ -82,6 +82,10 @@ mat-card {
       height: 32px;
 
       margin: 2px;
+
+      &.negative {
+        border: 4px solid #ec2a2a;
+      }
     }
 
     .clearing-warrior-container-container {
@@ -189,6 +193,13 @@ mat-card {
         }
 
         cursor: pointer;
+
+        &.error {
+          filter: drop-shadow(2px 2px 0 #ec2a2a)
+                  drop-shadow(2px -2px 0 #ec2a2a)
+                  drop-shadow(-2px 2px 0 #ec2a2a)
+                  drop-shadow(-2px -2px 0 #ec2a2a);
+        }
 
         &.selected {
           filter: drop-shadow(2px 2px 0 #69f0ae)
