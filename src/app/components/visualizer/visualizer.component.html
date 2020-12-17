@@ -41,7 +41,8 @@
 
             <img class="clearing-component building"
                   *ngFor="let building of getBuildings(clearing)"
-                  [src]="'assets/buildings/' + building + '.png'" />
+                  [class.negative]="building.isNegative"
+                  [src]="'assets/buildings/' + building.name + '.png'" />
           </div>
 
           <div class="clearing-tokens" *ngIf="clearingHasTokens(clearing)">
@@ -49,7 +50,8 @@
 
             <img class="clearing-component token"
                   *ngFor="let token of getTokens(clearing)"
-                  [src]="'assets/tokens/' + token + '.png'" />
+                  [class.negative]="token.isNegative"
+                  [src]="'assets/tokens/' + token.name + '.png'" />
           </div>
         </div>
       </mat-card-content>
@@ -67,6 +69,7 @@
              [ngClass]="[game.map.toLowerCase()]"
              *ngIf="game.players.D"
              (click)="showClearingInfo(0)"
+             [class.error]="clearingHasErrors(0, state)"
              [class.selected]="currentClearing === 0">
 
           <img class="map-pin" [src]="'assets/clearing/clearing-burrow.png'" />
@@ -74,7 +77,7 @@
           <div class="map-components" *ngIf="state">
             <img class="map-component warrior"
                 *ngFor="let warCount of state.clearings[0].warriors | keyvalue"
-                [class.hidden]="!warCount.value"
+                [class.hidden]="!isPositive(warCount.value)"
                 [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
           </div>
 
@@ -84,24 +87,29 @@
              [ngClass]="['clearing-' + (i + 1), 'clearing-' + suit]"
              *ngFor="let suit of game.clearings; let i = index"
              [class.selected]="currentClearing === i + 1"
+             [class.error]="clearingHasErrors(i + 1, state, suit)"
              (click)="showClearingInfo(i + 1)"
              [style.left]="rootlogService.getClearingPositions(game.map)[i][0] + 'px'"
              [style.top]="rootlogService.getClearingPositions(game.map)[i][1] + 'px'">
+
+          <img class="map-combat" *ngIf="action.combat && action.combat.clearing === i + 1" src="assets/svg/combat.svg" />
 
           <img class="map-pin" [src]="'assets/clearing/clearing-' + rootlogService.getSuitName(suit) + '.png'" />
 
           <div class="map-components">
             <img class="map-component building"
                   *ngFor="let building of getBuildings(state.clearings[i + 1])"
-                  [src]="'assets/buildings/' + building + '.png'" />
+                  [class.hidden]="building.isNegative"
+                  [src]="'assets/buildings/' + building.name + '.png'" />
 
             <img class="map-component token"
                   *ngFor="let token of getTokens(state.clearings[i + 1])"
-                  [src]="'assets/tokens/' + token + '.png'" />
+                  [class.hidden]="token.isNegative"
+                  [src]="'assets/tokens/' + token.name + '.png'" />
 
             <img class="map-component warrior"
                 *ngFor="let warCount of state.clearings[i + 1].warriors | keyvalue"
-                [class.hidden]="!warCount.value"
+                [class.hidden]="!isPositive(warCount.value)"
                 [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
           </div>
         </div>
