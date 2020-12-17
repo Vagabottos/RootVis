@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import {
-  RootAction, RootFaction, parseRootlog, RootGame, RootMap, RootSuit,
+  RootAction, RootActionType, RootFaction, parseRootlog, RootGame, RootMap, RootSuit,
   RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
-  RootActionTriggerPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem,
+  RootActionPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem,
   RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard
 } from '@seiyria/rootlog-parser';
 
@@ -279,8 +279,6 @@ export class RootlogService {
     if ((act as RootActionMove).things) {
       base.description = `[[needs move description]] ${(act as any).raw || '[no raw]'}`;
 
-      if ((act as any).raw === 'w$->11') { console.log(act); }
-
       const moveAct: RootActionMove = act as RootActionMove;
       const moves: any[] = [];
       const strings: string[] = [];
@@ -371,9 +369,9 @@ export class RootlogService {
       base.description = `Clears path between clearings ${clearAct.clearings[0]} and ${clearAct.clearings[1]}`;
     }
 
-    if ((act as RootActionSetOutcast).degree) {
+    if ((act as RootActionSetOutcast).isHated === true || (act as RootActionSetOutcast).isHated === false) {
       const outcastAct: RootActionSetOutcast = act as RootActionSetOutcast;
-      base.description = `Sets outcast to ${this.getSuitName(outcastAct.suit)}`;
+      base.description = `Sets ${outcastAct.isHated ? 'hated' : ''} outcast to ${this.getSuitName(outcastAct.suit)}`;
     }
 
     if ((act as RootActionSetPrices).price) {
@@ -387,9 +385,29 @@ export class RootlogService {
       base.description = `Updates funds ${JSON.stringify(updateFundsAct)}`;
     }
 
-    if ((act as RootActionTriggerPlot).plot) {
-      const plotAct: RootActionTriggerPlot = act as RootActionTriggerPlot;
-      base.description = `Triggers plot ${this.getCorvidPlotName(plotAct.plot)} in clearing ${plotAct.clearing}`;
+    if ((act as RootActionPlot).plot) {
+      const plotAct: RootActionPlot = act as RootActionPlot;
+      if (plotAct.type === RootActionType.FlipPlot) {
+        base.description = `Flips plot ${this.getCorvidPlotName(plotAct.plot)} in clearing ${plotAct.clearing}`;
+
+        base.moves = base.moves || [];
+        // REMOVE OLD PLOT
+        base.moves.push({
+          start: plotAct.clearing,
+          num: 1,
+          faction: RootFaction.Corvid,
+          piece: 't',
+          pieceType: RootPieceType.Token
+        });
+        // ADD NEW PLOT 
+        base.moves.push({
+          destination: plotAct.clearing,
+          num: 1,
+          faction: RootFaction.Corvid,
+          piece: plotAct.plot,
+          pieceType: RootPieceType.Token
+        });
+      }
     }
 
     if ((act as RootActionSwapPlots).clearings) {
