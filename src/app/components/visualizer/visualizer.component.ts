@@ -116,38 +116,44 @@ export class VisualizerComponent implements OnInit {
     this.clearingChange.next(idx);
   }
 
+  isPositive(num: number | undefined): boolean {
+    return (num || 0) > 0;
+  }
+
   clearingHasWarriors(clearing: RootClearing): boolean {
-    return Object.keys(clearing.warriors).some(w => (clearing.warriors[w as RootFaction] || 0) > 0);
+    return Object.keys(clearing.warriors).some(w => (clearing.warriors[w as RootFaction] || 0) !== 0);
   }
 
   clearingHasBuildings(clearing: RootClearing): boolean {
-    return Object.keys(clearing.buildings).some(b => (clearing.buildings[b] || 0) > 0);
+    return Object.keys(clearing.buildings).some(b => (clearing.buildings[b] || 0) !== 0);
   }
 
   clearingHasTokens(clearing: RootClearing): boolean {
-    return Object.keys(clearing.tokens).some(t => (clearing.tokens[t] || 0) > 0);
+    return Object.keys(clearing.tokens).some(t => (clearing.tokens[t] || 0) !== 0);
   }
 
-  getBuildings(clearing: RootClearing): string[] {
-    const buildings: string[] = [];
-    const uniqueBuildings = Object.keys(clearing.buildings);
-    uniqueBuildings.forEach(building => {
-      for (let i = 0; i < (clearing.buildings[building] || 0); i += 1) {
-        buildings.push(building);
+  private getCardboard(record: Partial<Record<string, number>>): any[] {
+    const resultCardboard: any[] = [];
+    const uniqueCardboard = Object.keys(record);
+    uniqueCardboard.forEach(cardboard => {
+      const limit = Math.abs(record[cardboard] || 0);
+      const isNegative = (record[cardboard] || 0) < 0;
+      for (let i = 0; i < limit; i += 1) {
+        resultCardboard.push({
+          name: cardboard,
+          isNegative: isNegative
+        });
       }
     });
-    return buildings;
+    return resultCardboard;
   }
 
-  getTokens(clearing: RootClearing): string[] {
-    const tokens: string[] = [];
-    const uniqueTokens = Object.keys(clearing.tokens);
-    uniqueTokens.forEach(token => {
-      for (let i = 0; i < (clearing.tokens[token] || 0); i += 1) {
-        tokens.push(token);
-      }
-    });
-    return tokens;
+  getBuildings(clearing: RootClearing): any[] {
+    return this.getCardboard(clearing.buildings);
+  }
+
+  getTokens(clearing: RootClearing): any[] {
+    return this.getCardboard(clearing.tokens);
   }
 
   getPlayers(game: RootGame): KeyValue<RootFaction, string>[] {

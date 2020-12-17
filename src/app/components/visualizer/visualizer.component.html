@@ -41,7 +41,8 @@
 
             <img class="clearing-component building"
                   *ngFor="let building of getBuildings(clearing)"
-                  [src]="'assets/buildings/' + building + '.png'" />
+                  [class.negative]="building.isNegative"
+                  [src]="'assets/buildings/' + building.name + '.png'" />
           </div>
 
           <div class="clearing-tokens" *ngIf="clearingHasTokens(clearing)">
@@ -49,7 +50,8 @@
 
             <img class="clearing-component token"
                   *ngFor="let token of getTokens(clearing)"
-                  [src]="'assets/tokens/' + token + '.png'" />
+                  [class.negative]="token.isNegative"
+                  [src]="'assets/tokens/' + token.name + '.png'" />
           </div>
         </div>
       </mat-card-content>
@@ -75,7 +77,7 @@
           <div class="map-components" *ngIf="state">
             <img class="map-component warrior"
                 *ngFor="let warCount of state.clearings[0].warriors | keyvalue"
-                [class.hidden]="!warCount.value"
+                [class.hidden]="!isPositive(warCount.value)"
                 [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
           </div>
 
@@ -95,15 +97,17 @@
           <div class="map-components">
             <img class="map-component building"
                   *ngFor="let building of getBuildings(state.clearings[i + 1])"
-                  [src]="'assets/buildings/' + building + '.png'" />
+                  [class.hidden]="building.isNegative"
+                  [src]="'assets/buildings/' + building.name + '.png'" />
 
             <img class="map-component token"
                   *ngFor="let token of getTokens(state.clearings[i + 1])"
-                  [src]="'assets/tokens/' + token + '.png'" />
+                  [class.hidden]="token.isNegative"
+                  [src]="'assets/tokens/' + token.name + '.png'" />
 
             <img class="map-component warrior"
                 *ngFor="let warCount of state.clearings[i + 1].warriors | keyvalue"
-                [class.hidden]="!warCount.value"
+                [class.hidden]="!isPositive(warCount.value)"
                 [src]="'assets/icon/faction-' + rootlogService.getFactionName(warCount.key) + '.png'" />
           </div>
         </div>
