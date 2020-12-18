@@ -314,14 +314,16 @@ export class RootlogService {
         }
 
         if (piece.pieceType === RootPieceType.Pawn) {
-          moveTypeString = `${this.getFactionProperName(piece.faction)} pawn${thing.number !== 1 ? 's' : ''}`;
+          moveTypeString = `the ${this.getFactionProperName(piece.faction)}'s pawn`;
         }
 
         if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
           moveTypeString = `${this.getFactionProperName(piece.faction)} ${this.getBuildingTokenName(piece.faction, piece.piece)}${thing.number !== 1 ? 's' : ''}`;
         }
 
-        const moveNum = `${thing.number} ${moveTypeString}`;
+        const moveNum = piece.pieceType === RootPieceType.Pawn
+          ? moveTypeString
+          : `${thing.number} ${moveTypeString}`;
         let startString = thing.start ? `clearing ${thing.start}` : 'supply';
         if (isForestStart) {
           startString = `forest ${isForestStartString}`;
@@ -342,7 +344,9 @@ export class RootlogService {
 
         let moveString = `from ${startString} to ${destString}`;
         let verb = 'Move';
-        if (startString === 'supply') {
+        if (piece.pieceType === RootPieceType.Pawn) {
+          moveString = `to ${destString}`;
+        } else if (startString === 'supply') {
           verb = 'Place';
           moveString = `in ${destString}`;
         } else if (destString === 'supply') {
@@ -375,7 +379,23 @@ export class RootlogService {
 
     if ((act as RootActionReveal).subjects) {
       const revealAct: RootActionReveal = act as RootActionReveal;
-      base.description = `Reveal ${JSON.stringify(revealAct)}.`;
+      if (revealAct.subjects.length > 0 && !revealAct.subjects.some(subject => !revealAct.subjects.map(subject => subject.revealer).includes(subject.revealer))) {
+        // ALL THE SAME REVEALER.
+        const revealingFaction = this.getFactionProperName(revealAct.subjects[0].revealer);
+        const cards = revealAct.subjects.map(subject => {
+          const cardName:string = subject.card
+            ? (subject.card.suit ? this.getSuitName(subject.card.suit) + ' ' : '') + (subject.card.cardName || '') + ' '
+            : '';
+          return `${subject.number} ${cardName}card${subject.number === 1 ? '' : 's'}`;
+        }).join(' and ');
+        const target = !revealAct.targets.some(t => t)
+          ? 'the whole table'
+          : revealAct.targets.map(this.getFactionProperName).join(' and ');
+        base.description = `${revealingFaction} reveals ${cards} to ${target}.`;
+      } else {
+        // MORE THAN ONE REVEALING FACTION IN ONE ACTION. (When would this happen?)
+        base.description = `Reveal ${JSON.stringify(revealAct)}.`;
+      }
     }
 
     if ((act as RootActionClearPath).clearings) {
