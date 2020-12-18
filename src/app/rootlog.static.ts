@@ -281,7 +281,7 @@ export const itemNames: Record<RootItem, string> = {
 };
 
 export const riverfolkCostNames: Record<RootRiverfolkPriceSpecial, string> = {
-  [RootRiverfolkPriceSpecial.HandCard]: 'hand card',
+  [RootRiverfolkPriceSpecial.HandCard]: 'hand cards',
   [RootRiverfolkPriceSpecial.Mercenaries]: 'mercenaries',
   [RootRiverfolkPriceSpecial.Riverboats]: 'riverboats'
 };
