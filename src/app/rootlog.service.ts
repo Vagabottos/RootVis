@@ -305,7 +305,7 @@ export class RootlogService {
 
           const isForestEnd = thing.destination && (thing.destination as RootForest).clearings;
           const isForestEndString = isForestEnd ? isForestEnd.sort((a, b) => a - b).join('_') : '';
-          
+
           if (thing.start && (!isBoardStart && !isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
           if (thing.destination && (!isBoardEnd && !isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
 
@@ -389,15 +389,15 @@ export class RootlogService {
           if (thing.start && (!isBoardStart && !Object.values(RootFaction).includes(isHandStartString as RootFaction))) { return; }
           if (thing.destination && (!isBoardEnd && !Object.values(RootFaction).includes(isHandEndString as RootFaction))) { return; }
 
-          const cardName:string = card
+          const cardName: string = card
             ? (card.suit ? this.getSuitName(card.suit) + ' ' : '') + (card.cardName ? this.getCardName(card.cardName) + ' ' : '')
             : '';
 
-          const moveNum:string = `${thing.number} ${cardName}card${thing.number === 1 ? '' : 's'}`;
-          
+          const moveNum = `${thing.number} ${cardName}card${thing.number === 1 ? '' : 's'}`;
+
           let startString = thing.start ? ` from their hand` : '';
           let destString = thing.destination ? ` to the ${this.getFactionProperName(isHandEndString)}'s hand` : '';
-          
+
           if (isBoardStart) {
             if (isBoardStartString === RootFaction.Woodland) {
               startString = ` from the ${this.getFactionProperName(isBoardStartString)}'s supporters`;
@@ -407,7 +407,7 @@ export class RootlogService {
           } else if (isHandStart) {
             startString = ` from their hand`;
           }
-          
+
           if (isBoardEnd) {
             if (isBoardEndString === RootFaction.Woodland) {
               destString = ` to the ${this.getFactionProperName(isBoardEndString)}'s supporters`;
@@ -423,8 +423,8 @@ export class RootlogService {
               destString = ` to the ${this.getFactionProperName(isHandEndString)}'s hand`;
             }
           }
-          
-          let verb = (function () {
+
+          const verb = (() => {
             if (!thing.start) {
               return 'Draw';
             } else if (!thing.destination) {
@@ -433,7 +433,7 @@ export class RootlogService {
               return 'Give';
             }
             return 'Add';
-          }());
+          })();
 
           const totalString = `${verb} ${moveNum}${startString}${destString}.`;
 
@@ -443,7 +443,7 @@ export class RootlogService {
             start: thing.start,
             destination: thing.destination,
             num: thing.number,
-            card: card,
+            card,
           });
 
         }
@@ -458,11 +458,12 @@ export class RootlogService {
 
     if ((act as RootActionReveal).subjects) {
       const revealAct: RootActionReveal = act as RootActionReveal;
-      if (revealAct.subjects.length > 0 && !revealAct.subjects.some(subject => !revealAct.subjects.map(subject => subject.revealer).includes(subject.revealer))) {
+      if (revealAct.subjects.length > 0 &&
+        !revealAct.subjects.some(subject => !revealAct.subjects.map(s => s.revealer).includes(subject.revealer))) {
         // ALL THE SAME REVEALER.
         const revealingFaction = this.getFactionProperName(revealAct.subjects[0].revealer);
         const cards = revealAct.subjects.map(subject => {
-          const cardName:string = subject.card
+          const cardName: string = subject.card
             ? (subject.card.suit ? this.getSuitName(subject.card.suit) + ' ' : '') + (subject.card.cardName || '') + ' '
             : '';
           return `${subject.number} ${cardName}card${subject.number === 1 ? '' : 's'}`;
@@ -489,12 +490,12 @@ export class RootlogService {
 
     if ((act as RootActionSetPrices).price) {
       const setPricesAct: RootActionSetPrices = act as RootActionSetPrices;
-      const allPrices = (function (priceTypes) {
+      const allPrices = (priceTypes => {
         if (priceTypes.length === 3) {
-          return 'all prices'
+          return 'all prices';
         }
         return `the price of ${priceTypes.join(' and ')}`;
-      }(setPricesAct.priceTypes.map(x => this.getRiverfolkCostName(x))));
+      })(setPricesAct.priceTypes.map(x => this.getRiverfolkCostName(x)));
       base.description = `Set ${allPrices} to ${setPricesAct.price}.`;
     }
 
