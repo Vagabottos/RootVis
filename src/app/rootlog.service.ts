@@ -6,7 +6,7 @@ import {
   RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
   RootActionPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem,
-  RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard, RootCardName
+  RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard, RootCardName, RootCard
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
@@ -189,7 +189,7 @@ export class RootlogService {
       act.moves.forEach(move => {
         const { num, faction, pieceType, piece, start, destination, destinationForest } = move;
 
-        const formattedPiece = `${faction.toLowerCase()}_${piece}`;
+        const formattedPiece = faction ? `${faction.toLowerCase()}_${piece}` : '';
 
         switch (pieceType) {
           case RootPieceType.Building: {
@@ -290,84 +290,163 @@ export class RootlogService {
 
       moveAct.things.forEach((thing) => {
         const piece = thing.thing as RootPiece;
-        if (!piece || !piece.faction || !piece.pieceType) { return; }
-        if (piece.pieceType === RootPieceType.Raft) { return; }
+        const card = thing.thing as RootCard;
 
-        const isBoardStart = thing.start && (thing.start as RootFactionBoard).faction;
-        const isBoardStartString = isBoardStart ? isBoardStart : '';
+        if (piece && piece.faction && piece.pieceType) {
 
-        const isForestStart = thing.start && (thing.start as RootForest).clearings;
-        const isForestStartString = isForestStart ? isForestStart.sort((a, b) => a - b).join('_') : '';
+          const isBoardStart = thing.start && (thing.start as RootFactionBoard).faction;
+          const isBoardStartString = isBoardStart ? isBoardStart : '';
 
-        const isBoardEnd = thing.destination && (thing.destination as RootFactionBoard).faction;
-        const isBoardEndString = isBoardEnd ? isBoardEnd : '';
+          const isForestStart = thing.start && (thing.start as RootForest).clearings;
+          const isForestStartString = isForestStart ? isForestStart.sort((a, b) => a - b).join('_') : '';
 
-        const isForestEnd = thing.destination && (thing.destination as RootForest).clearings;
-        const isForestEndString = isForestEnd ? isForestEnd.sort((a, b) => a - b).join('_') : '';
+          const isBoardEnd = thing.destination && (thing.destination as RootFactionBoard).faction;
+          const isBoardEndString = isBoardEnd ? isBoardEnd : '';
 
-        if (thing.start && (!isBoardStart && !isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
-        if (thing.destination && (!isBoardEnd && !isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
+          const isForestEnd = thing.destination && (thing.destination as RootForest).clearings;
+          const isForestEndString = isForestEnd ? isForestEnd.sort((a, b) => a - b).join('_') : '';
+          
+          if (thing.start && (!isBoardStart && !isForestStart && !isNumber(thing.start) && isNaN(+thing.start))) { return; }
+          if (thing.destination && (!isBoardEnd && !isForestEnd && !isNumber(thing.destination) && isNaN(+thing.destination))) { return; }
 
-        let moveTypeString = '';
-        if (piece.pieceType === RootPieceType.Warrior) {
-          moveTypeString = `${this.getFactionProperName(piece.faction)} warrior${thing.number !== 1 ? 's' : ''}`;
+          let moveTypeString = '';
+          if (piece.pieceType === RootPieceType.Warrior) {
+            moveTypeString = `${this.getFactionProperName(piece.faction)} warrior${thing.number !== 1 ? 's' : ''}`;
+          }
+
+          if (piece.pieceType === RootPieceType.Pawn) {
+            moveTypeString = `the ${this.getFactionProperName(piece.faction)}'s pawn`;
+          }
+
+          if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
+            moveTypeString = `${this.getFactionProperName(piece.faction)} ${this.getBuildingTokenName(piece.faction, piece.piece)}${thing.number !== 1 ? 's' : ''}`;
+          }
+
+          if (piece.pieceType === RootPieceType.Raft) {
+            moveTypeString = `the raft`;
+          }
+
+          const moveNum = piece.pieceType === RootPieceType.Pawn || piece.pieceType === RootPieceType.Raft
+            ? moveTypeString
+            : `${thing.number} ${moveTypeString}`;
+          let startString = thing.start ? `clearing ${thing.start}` : 'supply';
+          if (isForestStart) {
+            startString = `forest ${isForestStartString}`;
+          }
+
+          if (isBoardStart) {
+            startString = `${this.getFactionProperName(isBoardStartString)}'s board`;
+          }
+
+          let destString = thing.destination ? `clearing ${thing.destination}` : 'supply';
+          if (isForestEnd) {
+            destString = `forest ${isForestEndString}`;
+          }
+
+          if (isBoardEnd) {
+            destString = `${this.getFactionProperName(isBoardEndString)}'s board`;
+          }
+
+          let moveString = `from ${startString} to ${destString}`;
+          let verb = 'Move';
+          if (piece.pieceType === RootPieceType.Pawn) {
+            moveString = `to ${destString}`;
+          } else if (startString === 'supply') {
+            verb = 'Place';
+            moveString = `in ${destString}`;
+          } else if (destString === 'supply') {
+            verb = 'Remove';
+            moveString = `from ${startString}`;
+          }
+
+          const totalString = `${verb} ${moveNum} ${moveString}.`;
+
+          strings.push(totalString);
+
+          moves.push({
+            start: thing.start,
+            startForest: isForestStartString,
+            destination: thing.destination,
+            destinationForest: isForestEndString,
+            num: thing.number,
+            faction: piece.faction,
+            piece: piece.piece,
+            pieceType: piece.pieceType
+          });
+        } else if (card) { // IT'S A CARD, THEN.
+          const isBoardStart = thing.start && (thing.start as RootFactionBoard).faction;
+          const isBoardStartString = isBoardStart ? isBoardStart : '';
+
+          const isBoardEnd = thing.destination && (thing.destination as RootFactionBoard).faction;
+          const isBoardEndString = isBoardEnd ? isBoardEnd : '';
+
+          const isHandStart = thing.start && Object.values(RootFaction).includes(thing.start as RootFaction);
+          const isHandStartString = isHandStart ? thing.start as RootFaction : '';
+
+          const isHandEnd = thing.destination && Object.values(RootFaction).includes(thing.destination as RootFaction);
+          const isHandEndString = isHandEnd ? thing.destination as RootFaction : '';
+
+          if (thing.start && (!isBoardStart && !Object.values(RootFaction).includes(isHandStartString as RootFaction))) { return; }
+          if (thing.destination && (!isBoardEnd && !Object.values(RootFaction).includes(isHandEndString as RootFaction))) { return; }
+
+          const cardName:string = card
+            ? (card.suit ? this.getSuitName(card.suit) + ' ' : '') + (card.cardName ? this.getCardName(card.cardName) + ' ' : '')
+            : '';
+
+          const moveNum:string = `${thing.number} ${cardName}card${thing.number === 1 ? '' : 's'}`;
+          
+          let startString = thing.start ? ` from their hand` : '';
+          let destString = thing.destination ? ` to the ${this.getFactionProperName(isHandEndString)}'s hand` : '';
+          
+          if (isBoardStart) {
+            if (isBoardStartString === RootFaction.Woodland) {
+              startString = ` from the ${this.getFactionProperName(isBoardStartString)}'s supporters`;
+            } else {
+              startString = ` from the ${this.getFactionProperName(isBoardStartString)}'s board`;
+            }
+          } else if (isHandStart) {
+            startString = ` from their hand`;
+          }
+          
+          if (isBoardEnd) {
+            if (isBoardEndString === RootFaction.Woodland) {
+              destString = ` to the ${this.getFactionProperName(isBoardEndString)}'s supporters`;
+            } else if (isBoardEndString === RootFaction.Eyrie && isBoardEnd) {
+                destString = ` to their Decree as a ${'move'}`;
+            } else {
+              destString = ` to the ${this.getFactionProperName(isBoardEndString)}'s board`;
+            }
+          } else if (isHandEnd) {
+            if (isHandEndString === currentTurn) {
+              destString = ` to their hand`;
+            } else {
+              destString = ` to the ${this.getFactionProperName(isHandEndString)}'s hand`;
+            }
+          }
+          
+          let verb = (function () {
+            if (!thing.start) {
+              return 'Draw';
+            } else if (!thing.destination) {
+              return 'Discard';
+            } else if (isHandStart && isHandEnd) {
+              return 'Give';
+            }
+            return 'Add';
+          }());
+
+          const totalString = `${verb} ${moveNum}${startString}${destString}.`;
+
+          strings.push(totalString);
+
+          moves.push({
+            start: thing.start,
+            destination: thing.destination,
+            num: thing.number,
+            card: card,
+          });
+
         }
-
-        if (piece.pieceType === RootPieceType.Pawn) {
-          moveTypeString = `the ${this.getFactionProperName(piece.faction)}'s pawn`;
-        }
-
-        if (piece.pieceType === RootPieceType.Building || piece.pieceType === RootPieceType.Token) {
-          moveTypeString = `${this.getFactionProperName(piece.faction)} ${this.getBuildingTokenName(piece.faction, piece.piece)}${thing.number !== 1 ? 's' : ''}`;
-        }
-
-        const moveNum = piece.pieceType === RootPieceType.Pawn
-          ? moveTypeString
-          : `${thing.number} ${moveTypeString}`;
-        let startString = thing.start ? `clearing ${thing.start}` : 'supply';
-        if (isForestStart) {
-          startString = `forest ${isForestStartString}`;
-        }
-
-        if (isBoardStart) {
-          startString = `${this.getFactionProperName(isBoardStartString)}'s board`;
-        }
-
-        let destString = thing.destination ? `clearing ${thing.destination}` : 'supply';
-        if (isForestEnd) {
-          destString = `forest ${isForestEndString}`;
-        }
-
-        if (isBoardEnd) {
-          destString = `${this.getFactionProperName(isBoardEndString)}'s board`;
-        }
-
-        let moveString = `from ${startString} to ${destString}`;
-        let verb = 'Move';
-        if (piece.pieceType === RootPieceType.Pawn) {
-          moveString = `to ${destString}`;
-        } else if (startString === 'supply') {
-          verb = 'Place';
-          moveString = `in ${destString}`;
-        } else if (destString === 'supply') {
-          verb = 'Remove';
-          moveString = `from ${startString}`;
-        }
-
-        const totalString = `${verb} ${moveNum} ${moveString}.`;
-
-        strings.push(totalString);
-
-        moves.push({
-          start: thing.start,
-          startForest: isForestStartString,
-          destination: thing.destination,
-          destinationForest: isForestEndString,
-          num: thing.number,
-          faction: piece.faction,
-          piece: piece.piece,
-          pieceType: piece.pieceType
-        });
       });
 
       if (strings.length !== 0) {
