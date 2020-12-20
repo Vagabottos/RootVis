@@ -6,7 +6,8 @@ import {
   RootActionGainVP, RootActionCombat, RootActionCraft, RootActionMove, RootActionReveal,
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
   RootActionPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem,
-  RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard, RootCardName, RootCard
+  RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard, RootCardName,
+  RootCard, RootEyrieLeaderSpecial, RootEyrieSpecial, RootVagabondCharacterSpecial
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
@@ -15,7 +16,7 @@ import {
   buildingTokenNames,
   clearingPositions, corvidPlotNames, factionNames, factionProperNames,
   forestPositions,
-  FormattedAction, itemNames, cardNames, pieceNames, riverfolkCostNames, RootGameState, suitNames
+  FormattedAction, itemNames, cardNames, pieceNames, riverfolkCostNames, RootGameState, suitNames, eyrieLeaderNames, vagabondCharacterNames
 } from './rootlog.static';
 
 function clone(data: any): any {
@@ -101,7 +102,19 @@ export class RootlogService {
     return itemNames[item as RootItem];
   }
 
-  public getCardName(rootCard: RootCardName|string): string {
+  public getCardName(rootCard: RootCardName|RootEyrieLeaderSpecial|RootVagabondCharacterSpecial|string|undefined): string {
+    if (!rootCard) {
+      return '';
+    }
+
+    if (Object.values(RootEyrieLeaderSpecial).includes(rootCard as RootEyrieLeaderSpecial)) {
+      return eyrieLeaderNames[rootCard as RootEyrieLeaderSpecial];
+    }
+
+    if (Object.values(RootVagabondCharacterSpecial).includes(rootCard as RootVagabondCharacterSpecial)) {
+      return vagabondCharacterNames[rootCard as RootVagabondCharacterSpecial];
+    }
+
     return cardNames[rootCard as RootCardName];
   }
 
@@ -291,6 +304,7 @@ export class RootlogService {
       moveAct.things.forEach((thing) => {
         const piece = thing.thing as RootPiece;
         const card = thing.thing as RootCard;
+        const item = thing.thing as RootItem;
 
         if (piece && piece.faction && piece.pieceType) {
 
@@ -393,7 +407,20 @@ export class RootlogService {
             ? (card.suit ? this.getSuitName(card.suit) + ' ' : '') + (card.cardName ? this.getCardName(card.cardName) + ' ' : '')
             : '';
 
-          const moveNum = `${thing.number} ${cardName}card${thing.number === 1 ? '' : 's'}`;
+          const isEyrieLeader = Object.values(RootEyrieLeaderSpecial).includes(card.cardName as RootEyrieLeaderSpecial);
+          const isVagabondCharacter = Object.values(RootVagabondCharacterSpecial).includes(card.cardName as RootVagabondCharacterSpecial);
+
+          const moveNum = (() => {
+            if (isEyrieLeader) {
+              return 'the ' + cardName;
+            }
+
+            if (isVagabondCharacter) {
+              return 'the ' + cardName;
+            }
+
+            return `${thing.number} ${cardName}card${thing.number === 1 ? '' : 's'}`;
+          })();
 
           let startString = thing.start ? ` from their hand` : '';
           let destString = thing.destination ? ` to the ${this.getFactionProperName(isHandEndString)}'s hand` : '';
@@ -411,8 +438,16 @@ export class RootlogService {
           if (isBoardEnd) {
             if (isBoardEndString === RootFaction.Woodland) {
               destString = ` to the ${this.getFactionProperName(isBoardEndString)}'s supporters`;
-            } else if (isBoardEndString === RootFaction.Eyrie && isBoardEnd) {
-                destString = ` to their Decree as a ${'move'}`;
+            } else if (currentTurn === RootFaction.Eyrie) {
+              if (isEyrieLeader) {
+                destString = ` as their new leader`;
+              } else if (Object.values(RootEyrieSpecial).includes(destString as RootEyrieSpecial)) {
+                destString = ` to their Decree as a ${card.cardName}`;
+              }
+            } else if (currentTurn === RootFaction.Vagabond || currentTurn === RootFaction.Vagabond2) {
+              if (isVagabondCharacter) {
+                destString = ` as their character`;
+              }
             } else {
               destString = ` to the ${this.getFactionProperName(isBoardEndString)}'s board`;
             }
@@ -425,11 +460,16 @@ export class RootlogService {
           }
 
           const verb = (() => {
+            if (isEyrieLeader || isVagabondCharacter) {
+              return 'Choose';
+            }
             if (!thing.start) {
               return 'Draw';
-            } else if (!thing.destination) {
+            }
+            if (!thing.destination) {
               return 'Discard';
-            } else if (isHandStart && isHandEnd) {
+            }
+            if (isHandStart && isHandEnd) {
               return 'Give';
             }
             return 'Add';
