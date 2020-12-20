@@ -48,8 +48,8 @@ export class RootlogService {
     if (!gameString) { return false; }
 
     try {
-      const { turns } = this.game(gameString);
-      return turns?.length > 0;
+      const { turns, parseErrors } = this.game(gameString);
+      return turns?.length > 0 && parseErrors.length === 0;
 
     } catch {
       return false;
