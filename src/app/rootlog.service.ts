@@ -410,7 +410,7 @@ export class RootlogService {
 
           const verb = (() => {
             if (isFromRuin) {
-              return 'Takes'
+              return 'Takes';
             }
             if (isNewItemState) {
               if (thing.destination === RootItemState.FaceDown) {
