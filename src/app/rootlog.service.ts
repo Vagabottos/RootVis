@@ -7,7 +7,7 @@ import {
   RootActionClearPath, RootActionSetOutcast, RootActionSetPrices, RootActionUpdateFunds,
   RootActionPlot, RootActionSwapPlots, RootPieceType, RootPiece, RootItem,
   RootRiverfolkPriceSpecial, RootCorvidSpecial, RootForest, RootFactionBoard, RootCardName,
-  RootCard, RootEyrieLeaderSpecial, RootEyrieSpecial, RootVagabondCharacterSpecial
+  RootCard, RootEyrieLeaderSpecial, RootEyrieSpecial, RootVagabondCharacterSpecial, RootItemState
 } from '@seiyria/rootlog-parser';
 
 import { isNumber } from 'lodash';
@@ -386,6 +386,52 @@ export class RootlogService {
             faction: piece.faction,
             piece: piece.piece,
             pieceType: piece.pieceType
+          });
+        } else if (item && Object.values(RootItem).includes(item)) {
+          const isBoardStart = thing.start && (thing.start as RootFactionBoard).faction;
+          const isBoardStartString = isBoardStart ? isBoardStart : '';
+
+          const isBoardEnd = thing.destination && (thing.destination as RootFactionBoard).faction;
+          const isBoardEndString = isBoardEnd ? isBoardEnd : '';
+
+          const isFromRuin = isNumber(thing.start);
+          const isNewItemState = Object.values(RootItemState).includes(thing.destination as RootItemState);
+
+          if (thing.start && !isBoardStart && !isFromRuin) { return; }
+          if (thing.destination && !isBoardEnd && !isNewItemState) { return; }
+
+          const moveNum = `${thing.number} ${this.getItemName(item)}`;
+
+          const startString = isFromRuin
+            ? ` from the ruin at clearing ${thing.start}`
+            : '';
+
+          const destString = isFromRuin ? '' : '';
+
+          const verb = (() => {
+            if (isFromRuin) {
+              return 'Takes'
+            }
+            if (isNewItemState) {
+              if (thing.destination === RootItemState.FaceDown) {
+                return 'Exhausts';
+              }
+              if (thing.destination === RootItemState.FaceUp) {
+                return 'Refreshes';
+              }
+            }
+            return 'Moves';
+          })();
+
+          const totalString = `${verb} ${moveNum}${startString}${destString}.`;
+
+          strings.push(totalString);
+
+          moves.push({
+            start: thing.start,
+            destination: thing.destination,
+            num: thing.number,
+            item
           });
         } else if (card) { // IT'S A CARD, THEN.
           const isBoardStart = thing.start && (thing.start as RootFactionBoard).faction;
