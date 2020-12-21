@@ -1,4 +1,7 @@
-import { RootCardName, RootCorvidSpecial, RootFaction, RootItem, RootMap, RootPieceType, RootRiverfolkPriceSpecial, RootSuit } from '@seiyria/rootlog-parser';
+import {
+  RootCardName, RootCorvidSpecial, RootEyrieLeaderSpecial, RootFaction, RootItem,
+  RootMap, RootPieceType, RootRiverfolkPriceSpecial, RootSuit, RootVagabondCharacterSpecial
+} from '@seiyria/rootlog-parser';
 
 export interface RootClearing {
   warriors: Partial<Record<RootFaction, number>>;
@@ -181,6 +184,23 @@ export const pieceNames: Record<RootPieceType, string> = {
   [RootPieceType.Warrior]: 'warrior'
 };
 
+export const vagabondCharacterNames: Record<RootVagabondCharacterSpecial, string> = {
+  [RootVagabondCharacterSpecial.Adventurer]: 'Adventurer',
+  [RootVagabondCharacterSpecial.Arbiter]: 'Arbiter',
+  [RootVagabondCharacterSpecial.Harrier]: 'Harrier',
+  [RootVagabondCharacterSpecial.Ranger]: 'Ranger',
+  [RootVagabondCharacterSpecial.Ronin]: 'Ronin',
+  [RootVagabondCharacterSpecial.Scoundrel]: 'Scoundrel',
+  [RootVagabondCharacterSpecial.Thief]: 'Thief',
+  [RootVagabondCharacterSpecial.Tinker]: 'Tinker',
+  [RootVagabondCharacterSpecial.Vagrant]: 'Vagrant',
+};
+export const eyrieLeaderNames: Record<RootEyrieLeaderSpecial, string> = {
+  [RootEyrieLeaderSpecial.Builder]: 'Builder',
+  [RootEyrieLeaderSpecial.Charismatic]: 'Charismatic',
+  [RootEyrieLeaderSpecial.Commander]: 'Commander',
+  [RootEyrieLeaderSpecial.Despot]: 'Despot'
+};
 export const cardNames: Record<RootCardName, string> = {
   [RootCardName.Ambush]: 'Ambush',
   [RootCardName.AmbushFullName]: 'Ambush',
