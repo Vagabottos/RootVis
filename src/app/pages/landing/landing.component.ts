@@ -12,15 +12,18 @@ export class LandingComponent {
 
   games = [
     {
-      title: 'Winter Tournament - R1G3 - 3v1 chained Vagabond coalition',
+      title: '3v1 chained Vagabond coalition',
+      subtitle: 'Winter Tournament - R1G3',
       url: 'https://raw.githubusercontent.com/Vagabottos/Rootlog/master/Games/2020_11_26_winter_tournament_r1g3.rootlog'
     },
     {
-      title: 'Winter Tournament - R1G5 - Eyrie mid-game spike + Aftermath',
+      title: 'Eyrie mid-game spike + Aftermath',
+      subtitle: 'Winter Tournament - R1G5',
       url: 'https://raw.githubusercontent.com/Vagabottos/Rootlog/master/Games/2020_11_20_winter_tournament_r1g5.rootlog'
     },
     {
-      title: 'Winter Tournament - R2G4 - Otters, Mice, Cats, and Corvids',
+      title: 'Otters, Mice, Cats, and Corvids',
+      subtitle: 'Winter Tournament - R2G4',
       url: 'https://raw.githubusercontent.com/Vagabottos/Rootlog/master/Games/2020_11_24_winter_tournament_r2g4.rootlog'
     }
   ];

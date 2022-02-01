@@ -7,6 +7,12 @@ a:visited.link {
   color: violet;
 }
 
+.games {
+  display:  flex;
+  flex-flow: wrap row;
+  justify-content: center;
+}
+
 .mat-h1, .mat-h2 {
   text-align: center;
   width: 100%;

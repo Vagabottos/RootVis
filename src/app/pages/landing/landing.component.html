@@ -15,16 +15,10 @@
       <span class="mat-h2">Watch some tournament games:</span>
     </div>
   </div>
-  <span *ngFor="let game of games">
-    <div class="row">
-      <div class="col">
-        <a class="link" href="/full-game?gameUrl={{game.url}}">{{game.title}}</a>
-      </div>
-    </div>
-  </span>
-  <div class="row">
-    <div class="col">
-      <a class="btn" mat-raised-button color="primary" href="/input-game">Input Your Game</a>
-    </div>
+  <div class="games">
+    <mat-card *ngFor="let game of games"><mat-card-title>{{game.title}}</mat-card-title><mat-card-subtitle>{{game.subtitle}}</mat-card-subtitle><a mat-raised-button color="accent" href="/full-game?gameUrl={{game.url}}">Watch</a></mat-card>
+  </div>
+    <div class="row" style="justify-content: center">
+    <a class="btn" mat-raised-button color="primary" href="/input-game">Input Your Game</a>
   </div>
 </div>
