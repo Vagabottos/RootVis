@@ -6,13 +6,13 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <span class="info">RootVis is a tool for visualizing Root games using <a class="link" href="https://github.com/Vagabottos/Rootlog">Rootlog</a></span>
+      <span class="mat-h1">RootVis is a tool for visualizing Root games using <a class="link" href="https://github.com/Vagabottos/Rootlog">Rootlog</a></span>
     </div>
   </div>
 
   <div class="row">
     <div class="col">
-      Watch some tournament games:
+      <span class="mat-h2">Watch some tournament games:</span>
     </div>
   </div>
   <span *ngFor="let game of games">
@@ -24,7 +24,7 @@
   </span>
   <div class="row">
     <div class="col">
-      <button><a class="btn" href="/input-game">Input Your Game</a></button>
+      <a class="btn" mat-raised-button color="primary" href="/input-game">Input Your Game</a>
     </div>
   </div>
 </div>
