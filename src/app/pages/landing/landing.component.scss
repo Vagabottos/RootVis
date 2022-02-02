@@ -8,13 +8,17 @@ a:visited.link {
 }
 
 .games {
-  display:  flex;
+  display: flex;
   flex-flow: wrap row;
   justify-content: center;
 }
 
 .game {
   margin: 3px;
+}
+
+.input-wrapper {
+  justify-content: center;
 }
 
 .mat-h1, .mat-h2 {
