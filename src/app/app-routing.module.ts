@@ -5,7 +5,8 @@ const routes: Routes = [
   { path: 'embed-game', loadChildren: () => import('./pages/embed/embed.module').then(m => m.EmbedModule) },
   { path: 'full-game', loadChildren: () => import('./pages/full-game/full-game.module').then(m => m.FullGameModule) },
   { path: 'input-game', loadChildren: () => import('./pages/input/input.module').then(m => m.InputModule) },
-  { path: '**', redirectTo: 'input-game' }
+  { path: '', loadChildren: () => import('./pages/landing/landing.module').then(m => m.LandingModule) },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

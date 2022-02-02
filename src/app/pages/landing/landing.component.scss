@@ -1,0 +1,41 @@
+
+a.link {
+  color: pink;
+}
+
+a:visited.link {
+  color: violet;
+}
+
+.games {
+  display: flex;
+  flex-flow: wrap row;
+  justify-content: center;
+}
+
+.game {
+  margin: 3px;
+}
+
+.input-wrapper {
+  justify-content: center;
+}
+
+.mat-h1, .mat-h2 {
+  text-align: center;
+  width: 100%;
+}
+
+.container {
+  padding: 10px;
+
+  .row {
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+}
+
+
+.row {
+  margin-top: 10px;
+}

@@ -1,0 +1,24 @@
+
+<mat-toolbar color="primary">
+  <span>Rootvis</span>
+</mat-toolbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <span class="mat-h1">RootVis is a tool for visualizing Root games using <a class="link" href="https://github.com/Vagabottos/Rootlog">Rootlog</a></span>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <span class="mat-h2">Watch some tournament games:</span>
+    </div>
+  </div>
+  <div class="games">
+    <mat-card class="game" *ngFor="let game of games"><mat-card-title>{{game.title}}</mat-card-title><mat-card-subtitle>{{game.subtitle}}</mat-card-subtitle><a mat-raised-button color="accent" href="/full-game?gameUrl={{game.url}}">Watch</a></mat-card>
+  </div>
+    <div class="row" style="input-wrapper">
+    <a class="btn" mat-raised-button color="primary" href="/input-game">Input Your Game</a>
+  </div>
+</div>
