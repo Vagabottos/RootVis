@@ -274,15 +274,11 @@ export class RootlogService {
       const vpAct: RootActionGainVP = act as RootActionGainVP;
       base.gainVP = { vp: vpAct.vp, faction: vpAct.faction };
       base.description = `${this.getFactionProperName(vpAct.faction)} gains ${vpAct.vp} VP.`;
-    }
-
-    if ((act as RootActionCombat).attacker) {
+    } else if ((act as RootActionCombat).attacker) {
       const combatAct: RootActionCombat = act as RootActionCombat;
       base.combat = { attacker: combatAct.attacker, defender: combatAct.defender, clearing: combatAct.clearing };
       base.description = `${this.getFactionProperName(combatAct.attacker)} battles ${this.getFactionProperName(combatAct.defender)} in clearing ${combatAct.clearing}.`;
-    }
-
-    if ((act as RootActionCraft).craftCard || (act as RootActionCraft).craftItem) {
+    } else if ((act as RootActionCraft).craftCard || (act as RootActionCraft).craftItem) {
       const craftAct: RootActionCraft = act as RootActionCraft;
       if (craftAct.craftCard) {
         base.description = `Craft ${this.getCardName(craftAct.craftCard)}.`;
@@ -292,9 +288,7 @@ export class RootlogService {
         base.craftItem = craftAct.craftItem;
         base.description = `Craft ${this.getItemName(craftAct.craftItem)}.`;
       }
-    }
-
-    if ((act as RootActionMove).things) {
+    } else if ((act as RootActionMove).things) {
       base.description = `[[needs move description]] ${(act as any).raw || '[no raw]'}`;
 
       const moveAct: RootActionMove = act as RootActionMove;
@@ -540,9 +534,7 @@ export class RootlogService {
       }
 
       base.moves = moves;
-    }
-
-    if ((act as RootActionReveal).subjects) {
+    } else if ((act as RootActionReveal).subjects) {
       const revealAct: RootActionReveal = act as RootActionReveal;
       if (revealAct.subjects.length > 0 &&
         !revealAct.subjects.some(subject => !revealAct.subjects.map(s => s.revealer).includes(subject.revealer))) {
@@ -562,19 +554,10 @@ export class RootlogService {
         // MORE THAN ONE REVEALING FACTION IN ONE ACTION. (When would this happen?)
         base.description = `Reveal ${JSON.stringify(revealAct)}.`;
       }
-    }
-
-    if ((act as RootActionClearPath).clearings) {
-      const clearAct: RootActionClearPath = act as RootActionClearPath;
-      base.description = `Clear path between clearings ${clearAct.clearings[0]} and ${clearAct.clearings[1]}.`;
-    }
-
-    if ((act as RootActionSetOutcast).isHated === true || (act as RootActionSetOutcast).isHated === false) {
+    } else if ((act as RootActionSetOutcast).isHated === true || (act as RootActionSetOutcast).isHated === false) {
       const outcastAct: RootActionSetOutcast = act as RootActionSetOutcast;
       base.description = `Set ${outcastAct.isHated ? 'hated' : ''} outcast to ${this.getSuitName(outcastAct.suit)}.`;
-    }
-
-    if ((act as RootActionSetPrices).price) {
+    } else if ((act as RootActionSetPrices).price) {
       const setPricesAct: RootActionSetPrices = act as RootActionSetPrices;
       const allPrices = (priceTypes => {
         if (priceTypes.length === 3) {
@@ -583,14 +566,10 @@ export class RootlogService {
         return `the price of ${priceTypes.join(' and ')}`;
       })(setPricesAct.priceTypes.map(x => this.getRiverfolkCostName(x)));
       base.description = `Set ${allPrices} to ${setPricesAct.price}.`;
-    }
-
-    if ((act as RootActionUpdateFunds).funds) {
+    } else if ((act as RootActionUpdateFunds).funds) {
       const updateFundsAct: RootActionUpdateFunds = act as RootActionUpdateFunds;
       base.description = `Has ${updateFundsAct.funds} total funds.`;
-    }
-
-    if ((act as RootActionPlot).plot) {
+    } else if ((act as RootActionPlot).plot) {
       const plotAct: RootActionPlot = act as RootActionPlot;
       if (plotAct.type === RootActionType.FlipPlot) {
         base.description = `Flip ${this.getCorvidPlotName(plotAct.plot)} plot in clearing ${plotAct.clearing}.`;
@@ -613,11 +592,12 @@ export class RootlogService {
           pieceType: RootPieceType.Token
         });
       }
-    }
-
-    if ((act as RootActionSwapPlots).clearings) {
+    } else if ((act as RootActionSwapPlots).clearings && (act as RootActionSwapPlots).type == RootActionType.SwapPlots) {
       const swapAct: RootActionSwapPlots = act as RootActionSwapPlots;
       base.description = `Swap plots between clearings ${swapAct.clearings[0]} and ${swapAct.clearings[1]}.`;
+    } else if ((act as RootActionClearPath).clearings) {
+      const clearAct: RootActionClearPath = act as RootActionClearPath;
+      base.description = `Clear path between clearings ${clearAct.clearings[0]} and ${clearAct.clearings[1]}.`;
     }
 
     return base;
