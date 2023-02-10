@@ -592,7 +592,7 @@ export class RootlogService {
           pieceType: RootPieceType.Token
         });
       }
-    } else if ((act as RootActionSwapPlots).clearings && (act as RootActionSwapPlots).type == RootActionType.SwapPlots) {
+    } else if ((act as RootActionSwapPlots).clearings && (act as RootActionSwapPlots).type === RootActionType.SwapPlots) {
       const swapAct: RootActionSwapPlots = act as RootActionSwapPlots;
       base.description = `Swap plots between clearings ${swapAct.clearings[0]} and ${swapAct.clearings[1]}.`;
     } else if ((act as RootActionClearPath).clearings) {
